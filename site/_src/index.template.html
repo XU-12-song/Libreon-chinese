@@ -14,7 +14,11 @@
 <link rel="icon" type="image/png" href="assets/libreon-icon.png">
 <link rel="apple-touch-icon" href="assets/libreon-icon.png">
 <link rel="stylesheet" href="styles.css">
-<script>document.documentElement.classList.add('js')</script>
+<script>
+  // Before the first paint: a theme the visitor picked earlier (kept only in this browser).
+  document.documentElement.classList.add('js');
+  try { var t = localStorage.getItem('libreon-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
 <script src="main.js" defer></script>
 </head>
 <body>
@@ -33,7 +37,11 @@
         <li><a href="#faq">FAQ</a></li>
       </ul>
     </nav>
-    <a class="btn btn--small" href="#top">Get it</a>
+    <button class="theme-toggle" type="button" aria-label="Switch to light mode" title="Light or dark">
+      <svg class="theme-toggle__sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+      <svg class="theme-toggle__moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z"/></svg>
+    </button>
+    <a class="btn btn--small js-get" href="#download">Get it</a>
   </div>
 </header>
 
@@ -47,7 +55,7 @@
       <h1 id="hero-title" class="hero__title">Work <span class="squiggle">freely.<svg viewBox="0 0 300 24" aria-hidden="true" preserveAspectRatio="none"><path d="M4 16 C 40 4, 70 22, 108 12 S 180 4, 214 14 S 270 20, 296 8"/></svg></span></h1>
       <p class="hero__lede">A private, fully offline office suite. Word, Excel, PowerPoint, PDF and text files, on your phone. <strong>No ads, no subscriptions, no account, no trackers, no AI.</strong></p>
       <div class="hero__cta">
-        <a class="btn btn--big" href="https://github.com/jainiakhil/Libreon/releases/latest">
+        <a class="btn btn--big" id="download" href="https://github.com/jainiakhil/Libreon/releases/latest">
           <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>
           Download the APK
         </a>

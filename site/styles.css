@@ -64,7 +64,9 @@
     color-scheme: dark;
   }
 }
+:root[data-theme="light"] { color-scheme: light; }
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #0d121a; --bg-alt: #131a25; --surface: #18202c; --text: #f4ede3; --muted: #aab3c0;
   --line: #3a4658; --shadow: #000000; --accent-text: #ff8a6e; --cloud: #26303f; --wind: #4f6585;
   --strike: #ff6a4b; --focus: #6cb6ff; --sticker-edge: rgba(253, 240, 220, .85); color-scheme: dark;
@@ -134,6 +136,65 @@ section { padding: clamp(64px, 10vw, 120px) 0; }
 .nav a:hover { background: color-mix(in srgb, var(--text) 7%, transparent); }
 @media (min-width: 760px) { .nav { display: flex; } .topbar__inner { gap: 20px; } }
 
+/* Light/dark switch: shows the sun in dark mode (to go light) and the moon in light mode. */
+.theme-toggle {
+  display: grid; place-items: center; width: 42px; height: 42px; flex: none;
+  color: var(--text); background: var(--surface); cursor: pointer;
+  border: 2.5px solid var(--line); border-radius: 12px; box-shadow: 3px 3px 0 var(--shadow);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.theme-toggle:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+.theme-toggle:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow); }
+.theme-toggle svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.theme-toggle__moon { fill: currentColor; stroke: none; display: none; }
+.theme-toggle__sun { display: none; }
+:root[data-theme="light"] .theme-toggle__moon, :root:not([data-theme]) .theme-toggle__moon { display: block; }
+:root[data-theme="dark"] .theme-toggle__sun { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-toggle__moon { display: none; }
+  :root:not([data-theme]) .theme-toggle__sun { display: block; }
+}
+.theme-toggle.is-spinning svg { animation: toggle-spin .5s cubic-bezier(.3,1.6,.5,1); }
+@keyframes toggle-spin { from { transform: rotate(-120deg) scale(.4); } to { transform: none; } }
+
+/* "Get it": the download button grows, wobbles, glows in the tile colours and throws confetti. */
+.btn--big.is-party {
+  position: relative; z-index: 5;
+  animation: party 1.6s cubic-bezier(.3,1.4,.5,1) both, party-glow .5s linear 1.6s 6 alternate;
+}
+.btn--big.is-party .btn__icon { animation: party-arrow .45s ease-in-out 4; }
+.btn--big.is-party, .btn--big.is-big { transform-origin: 20% 50%; }
+.btn--big.is-big { transform: scale(1.18); box-shadow: 6px 6px 0 var(--shadow); }
+@media (max-width: 520px) { .btn--big.is-big { transform: scale(1.08); } }
+@keyframes party {
+  0%   { transform: scale(1) rotate(0); }
+  12%  { transform: scale(1.55) rotate(-8deg); }
+  22%  { transform: scale(1.35) rotate(7deg); }
+  32%  { transform: scale(1.5) rotate(-6deg); }
+  42%  { transform: scale(1.3) rotate(5deg); }
+  52%  { transform: scale(1.42) rotate(-3deg) translateY(-6px); }
+  64%  { transform: scale(1.2) rotate(360deg); }
+  100% { transform: scale(1.18) rotate(360deg); }
+}
+@keyframes party-glow {
+  from { box-shadow: 6px 6px 0 var(--shadow), 0 0 0 4px var(--tile-orange), 0 0 26px 8px color-mix(in srgb, var(--tile-orange) 60%, transparent); }
+  to   { box-shadow: 6px 6px 0 var(--shadow), 0 0 0 4px var(--tile-blue), 0 0 34px 12px color-mix(in srgb, var(--tile-green) 55%, transparent); }
+}
+@keyframes party-arrow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+.confetti-bit {
+  position: fixed; z-index: 30; pointer-events: none;
+  width: 10px; height: 14px; border-radius: 3px; border: 1.5px solid var(--ink);
+  animation: confetti-fly var(--t, 1.4s) cubic-bezier(.15,.7,.4,1) forwards;
+}
+.confetti-bit--round { border-radius: 50%; width: 11px; height: 11px; }
+@keyframes confetti-fly {
+  0%   { transform: translate(-50%, -50%) scale(.4) rotate(0); opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(var(--rot)); opacity: 0; }
+}
+.hero__art.is-cheering .fox { animation: cheer .9s cubic-bezier(.3,1.5,.5,1) 2; transform-origin: 50% 90%; }
+@keyframes cheer { 0%, 100% { transform: none; } 35% { transform: translateY(-22px) scale(1.08) rotate(-6deg); } 65% { transform: translateY(-6px) rotate(5deg); } }
+
 /* ---------- Foxes (shared) ---------- */
 .fox { width: 100%; height: 100%; overflow: visible; }
 .fox .fox-art { filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--ink) 18%, transparent)); }
@@ -152,12 +213,12 @@ section { padding: clamp(32px, 7vw, 88px) 0; }
 .section-note { color: var(--muted); margin: -.2em 0 18px; font-size: .95rem; }
 
 /* ---------- Hero (with download) ---------- */
-.hero { padding-top: clamp(20px, 6vw, 72px); padding-bottom: clamp(36px, 6vw, 72px); }
+.hero { padding-top: clamp(20px, 6vw, 72px); padding-bottom: clamp(36px, 6vw, 72px); overflow-x: clip; }
 .hero__grid { display: grid; gap: 8px; align-items: center; }
-.hero__art { order: -1; height: 120px; max-width: 150px; justify-self: center; width: 100%; }
+.hero__art { order: -1; height: 180px; max-width: 225px; justify-self: center; width: 100%; }
 @media (min-width: 860px) {
   .hero__grid { grid-template-columns: 1.3fr .7fr; gap: 48px; }
-  .hero__art { order: 0; height: 240px; max-width: 280px; }
+  .hero__art { order: 0; height: 360px; max-width: 420px; }
 }
 .hero__title { font-size: clamp(3.2rem, 13vw, 6.5rem); font-weight: 900; letter-spacing: -.045em; line-height: .95; margin-bottom: .3em; }
 .squiggle { position: relative; display: inline-block; color: var(--fox); white-space: nowrap; }
@@ -486,6 +547,9 @@ html.js .scene:not(.is-playing) *, html.js .scene:not(.is-playing) { animation-p
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .btn--big.is-party, .btn--big.is-party .btn__icon, .hero__art.is-cheering .fox, .theme-toggle.is-spinning svg { animation: none !important; }
+  .btn--big.is-party { box-shadow: 6px 6px 0 var(--shadow), 0 0 0 4px var(--tile-orange); }
+  .confetti-bit { display: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   html.js [data-reveal] { opacity: 1; transform: none; }
   html.js .sticker[data-reveal] { transform: rotate(var(--r, 0deg)); }
