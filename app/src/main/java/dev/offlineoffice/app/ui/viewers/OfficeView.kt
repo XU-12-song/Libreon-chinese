@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
@@ -53,6 +55,7 @@ import dev.offlineoffice.app.ui.LocalDarkTheme
 import dev.offlineoffice.app.ui.LocalFullScreen
 import dev.offlineoffice.app.ui.openExternalLink
 import dev.offlineoffice.office.OfficeClient
+import kotlinx.coroutines.delay
 
 /** The engine's page for an Office document, drawn by the engine process into a surface of ours. */
 @Composable
@@ -67,6 +70,16 @@ fun OfficeView(session: OfficeSession, onSave: () -> Unit, onReload: () -> Unit)
     val dark = LocalDarkTheme.current
     LaunchedEffect(document, dark) { document.setDarkTheme(dark) }
     var findOpen by rememberSaveable(session) { mutableStateOf(false) }
+    // Tapping the page does nothing for the keyboard until the page's pencil button is tapped;
+    // say so when someone taps a document still in reading mode (issue #14).
+    var editHint by remember(document) { mutableStateOf(false) }
+    LaunchedEffect(document) { document.viewTaps.collect { editHint = true } }
+    LaunchedEffect(editHint) {
+        if (editHint) {
+            delay(EDIT_HINT_MS)
+            editHint = false
+        }
+    }
     LaunchedEffect(session) { session.findRequests.collect { findOpen = true } }
 
     Column(Modifier.fillMaxSize()) {
@@ -85,11 +98,24 @@ fun OfficeView(session: OfficeSession, onSave: () -> Unit, onReload: () -> Unit)
             Surface(color = MaterialTheme.colorScheme.tertiaryContainer) {
                 Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "Tip: double-tap a word (or long-press it while reading) to select it, then drag the handles.",
+                        "Tip: tap the pencil button to edit. Double-tap a word (or long-press it while reading) to select it, then drag the handles.",
                         Modifier.weight(1f).padding(vertical = 8.dp),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     TextButton(onClick = settings::dismissOfficeTip) { Text("Got it") }
+                }
+            }
+        }
+        if (editHint && state == OfficeClient.State.Ready) {
+            Surface(color = MaterialTheme.colorScheme.primaryContainer) {
+                Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Outlined.Edit, contentDescription = null, Modifier.size(20.dp))
+                    Text(
+                        "You're in reading mode. To type, tap the pencil button at the bottom right of the page.",
+                        Modifier.weight(1f).padding(start = 12.dp, top = 8.dp, bottom = 8.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    TextButton(onClick = { editHint = false }) { Text("OK") }
                 }
             }
         }
@@ -207,3 +233,5 @@ private fun OfficeFindBar(document: OfficeClient, onClose: () -> Unit) {
         }
     }
 }
+
+private const val EDIT_HINT_MS = 6_000L

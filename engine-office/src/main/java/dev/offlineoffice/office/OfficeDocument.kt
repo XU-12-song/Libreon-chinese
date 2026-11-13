@@ -86,15 +86,45 @@ internal class OfficeDocument(private val context: Context, val file: File) {
     /** Shown in whatever window currently hosts it; never recreated. */
     val webView: WebView = createWebView()
 
+    /**
+     * A physical keyboard is in use. The page then never asks for the on-screen keyboard, so a
+     * wrong or stale value leaves the user unable to type (issue #14): it follows the app's
+     * live value, and the loaded page is told about every change.
+     */
     var hardwareKeyboard: Boolean
         get() = bridge.hardwareKeyboard
         set(value) {
+            if (bridge.hardwareKeyboard == value) return
             bridge.hardwareKeyboard = value
+            if (_state.value == State.Ready) {
+                webView.post { webView.evaluateJavascript("if (window.keyboard) window.keyboard.hardwareKeyboardAttached = $value;", null) }
+            }
         }
+
+    /**
+     * The user tapped the page of an editable document that is still in reading mode, where the
+     * keyboard does not come up until the page's pencil button is tapped (issue #14).
+     */
+    private val _viewTaps = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val viewTaps: SharedFlow<Unit> = _viewTaps.asSharedFlow()
+
+    private var readOnly = false
 
     /** Starts loading. Progress and failures are reported through [state]. */
     suspend fun open(darkTheme: Boolean, readOnly: Boolean) {
         this.darkTheme = darkTheme
+        this.readOnly = readOnly
+        // The page's scripts need a recent WebView; an old one leaves a blank page, so say why.
+        val webViewVersion = WebView.getCurrentWebViewPackage()?.versionName
+        val webViewMajor = webViewVersion?.substringBefore('.')?.toIntOrNull()
+        if (webViewMajor != null && webViewMajor < MIN_WEBVIEW_MAJOR) {
+            _state.value = State.Failed(
+                "Office documents need a newer Android System WebView (this phone has version " +
+                    "$webViewMajor, and $MIN_WEBVIEW_MAJOR or newer is needed). Update \"Android System WebView\" " +
+                    "in the Play Store or your app store, then tap Reload.",
+            )
+            return
+        }
         OfficeEngine.prepare(context)
         val notebookbar = context.resources.configuration.smallestScreenWidthDp >= 600
         val fileUrl = Uri.fromFile(file).toString()
@@ -167,7 +197,12 @@ internal class OfficeDocument(private val context: Context, val file: File) {
     private fun onReady() {
         if (_state.compareAndSet(State.Loading, State.Ready)) {
             addZoomButtons()
-            webView.post { webView.evaluateJavascript(OPEN_LINKS_JS, null) }
+            webView.post {
+                webView.evaluateJavascript(OPEN_LINKS_JS, null)
+                webView.evaluateJavascript(VIEW_TAPS_JS, null)
+                // The value may have changed while the page loaded.
+                webView.evaluateJavascript("if (window.keyboard) window.keyboard.hardwareKeyboardAttached = ${bridge.hardwareKeyboard};", null)
+            }
         }
     }
 
@@ -321,6 +356,11 @@ internal class OfficeDocument(private val context: Context, val file: File) {
                 return false
             }
             "EDITMODE" -> editing = message.substringAfter(' ', "").trim() == "on"
+            VIEW_TAP -> {
+                // Give a tap on the pencil button time to switch to edit mode first.
+                if (!editing && !readOnly) webView.postDelayed({ if (!editing) _viewTaps.tryEmit(Unit) }, VIEW_TAP_SETTLE_MS)
+                return false
+            }
             "LIGHT_SCREEN", "DIM_SCREEN" -> webView.post { webView.keepScreenOn = command == "LIGHT_SCREEN" }
             // Not offered yet: printing, export, and opening links (the app is offline).
             "PRINT", "downloadas", "exportfile", "HYPERLINK", "REQUESTFILECOPY" ->
@@ -334,6 +374,8 @@ internal class OfficeDocument(private val context: Context, val file: File) {
     private companion object {
         const val TAG = "OfficeDocument"
         const val FRONT_END = "file:///android_asset/dist/cool.html"
+        /** The front-end uses class static blocks (94) and structuredClone (98). */
+        const val MIN_WEBVIEW_MAJOR = 98
         const val USER_NAME = "Me"
         const val SAVE_TIMEOUT_MS = 120_000L
         const val SELECTION_TIMEOUT_MS = 10_000L
@@ -353,6 +395,35 @@ internal class OfficeDocument(private val context: Context, val file: File) {
         /** Front-end message (made up by [OPEN_LINKS_JS]) asking to open a link elsewhere. */
         const val OPEN_LINK = "LIBREON_OPENLINK"
         val LINK_SCHEMES = listOf("http://", "https://", "mailto:", "tel:")
+
+        /** Front-end message (made up by [VIEW_TAPS_JS]): a tap on the page itself. */
+        const val VIEW_TAP = "LIBREON_VIEWTAP"
+        const val VIEW_TAP_SETTLE_MS = 700L
+
+        /**
+         * Reports short, still taps on the document (not its toolbars or buttons), so the app
+         * can point out the pencil button while the page is in reading mode.
+         */
+        val VIEW_TAPS_JS = """
+            (function () {
+              if (window.__libreonTaps) return;
+              window.__libreonTaps = true;
+              let down = null;
+              document.addEventListener('pointerdown', function (e) {
+                down = e.isPrimary ? { x: e.clientX, y: e.clientY, t: e.timeStamp } : null;
+              }, true);
+              document.addEventListener('pointerup', function (e) {
+                const d = down;
+                down = null;
+                if (!d || !e.isPrimary || e.timeStamp - d.t > 400) return;
+                if (Math.abs(e.clientX - d.x) > 12 || Math.abs(e.clientY - d.y) > 12) return;
+                const t = e.target;
+                if (!t || !t.closest || !t.closest('#document-container')) return;
+                if (t.closest('#mobile-edit-button, button, [role=button], .jsdialog, .ui-dialog, input, textarea')) return;
+                window.COOLMessageHandler.postMobileMessage('$VIEW_TAP');
+              }, true);
+            })();
+        """.trimIndent()
 
         /**
          * The page opens links with window.open, which does nothing in a WebView. Pass web,

@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.res.Configuration
+import android.hardware.input.InputManager
+import android.view.InputDevice
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -14,6 +16,7 @@ import android.os.Message
 import android.os.Messenger
 import android.os.Process
 import android.view.SurfaceControlViewHost.SurfacePackage
+import androidx.core.os.BundleCompat
 import android.view.SurfaceView
 import dev.offlineoffice.office.OfficeProtocol as P
 import java.io.File
@@ -61,6 +64,10 @@ class OfficeClient(context: Context) {
     /** Links the user chose to open from the document; see [OfficeDocument.linkRequests]. */
     private val _linkRequests = MutableSharedFlow<String>(extraBufferCapacity = 4)
     val linkRequests: SharedFlow<String> = _linkRequests.asSharedFlow()
+
+    /** Taps on the page of an editable document in reading mode; see [OfficeDocument.viewTaps]. */
+    private val _viewTaps = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val viewTaps: SharedFlow<Unit> = _viewTaps.asSharedFlow()
 
     /** Writer's live word count line, e.g. "Selected: 3 of 1,204 words, 17 of 6,880 characters". */
     private val _wordCount = MutableStateFlow<String?>(null)
@@ -117,7 +124,7 @@ class OfficeClient(context: Context) {
         send(P.ATTACH, view.width, view.height, Bundle().apply {
             putBinder(P.KEY_HOST_TOKEN, view.hostToken)
             putInt(P.KEY_DISPLAY, view.display.displayId)
-            putBoolean(P.KEY_KEYBOARD, view.resources.configuration.keyboard == Configuration.KEYBOARD_QWERTY)
+            putBoolean(P.KEY_KEYBOARD, hasHardwareKeyboard(view.context))
         })
     }
 
@@ -202,7 +209,8 @@ class OfficeClient(context: Context) {
                 opened.complete(Unit)
             }
             P.SURFACE -> {
-                val surface = msg.data.getParcelable(P.KEY_SURFACE, SurfacePackage::class.java) ?: return
+                // BundleCompat: Bundle.getParcelable(key, Class) only exists on Android 13+ (issue #15).
+                val surface = BundleCompat.getParcelable(msg.data, P.KEY_SURFACE, SurfacePackage::class.java) ?: return
                 surfaceView?.setChildSurfacePackage(surface)
             }
             P.STATE -> _state.value = when (msg.arg1) {
@@ -215,6 +223,7 @@ class OfficeClient(context: Context) {
             P.SAVED, P.EXPORTED -> saves[msg.arg1]?.complete(msg.peekData()?.getString(P.KEY_MESSAGE))
             P.FOUND -> _found.tryEmit(msg.arg1)
             P.OPEN_LINK -> msg.data.getString(P.KEY_MESSAGE)?.let { _linkRequests.tryEmit(it) }
+            P.VIEW_TAP -> _viewTaps.tryEmit(Unit)
             P.WORD_COUNT -> _wordCount.value = msg.data.getString(P.KEY_MESSAGE)
             P.SELECTION -> selections[msg.arg1]?.complete(msg.peekData()?.getString(P.KEY_MESSAGE))
         }
@@ -244,5 +253,26 @@ class OfficeClient(context: Context) {
         const val SAVE_TIMEOUT_MS = 130_000L
         const val SELECTION_TIMEOUT_MS = 15_000L
         const val EXIT_TIMEOUT_MS = 5_000L
+    }
+}
+
+/**
+ * A physical keyboard (Bluetooth or USB) is connected, so the page need not ask for the
+ * on-screen one. The configuration alone is not enough: some phones (and the emulator) report
+ * a built-in "keyboard" while the on-screen keyboard is the only one, and the page then never
+ * brings it up (issue #14). Connecting or removing a keyboard recreates the activity, which
+ * attaches again with a fresh answer.
+ */
+internal fun hasHardwareKeyboard(context: Context): Boolean {
+    val configuration = context.resources.configuration
+    if (configuration.keyboard != Configuration.KEYBOARD_QWERTY ||
+        configuration.hardKeyboardHidden != Configuration.HARDKEYBOARDHIDDEN_NO
+    ) return false
+    val input = context.getSystemService(InputManager::class.java) ?: return false
+    return input.inputDeviceIds.any { id ->
+        val device = input.getInputDevice(id) ?: return@any false
+        device.isExternal && !device.isVirtual &&
+            device.keyboardType == InputDevice.KEYBOARD_TYPE_ALPHABETIC &&
+            device.supportsSource(InputDevice.SOURCE_KEYBOARD)
     }
 }

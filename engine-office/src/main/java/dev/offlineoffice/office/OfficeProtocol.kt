@@ -45,6 +45,8 @@ internal object OfficeProtocol {
     const val EXPORTED = 110
     /** Data: [KEY_MESSAGE], a web, e-mail or phone link the user chose to open. */
     const val OPEN_LINK = 111
+    /** The user tapped the page while an editable document is in reading mode. */
+    const val VIEW_TAP = 112
 
     const val FIND_BACKWARD = 1
     const val FIND_ALL = 2
