@@ -34,6 +34,7 @@ Most office apps only keep what you have saved: if the app is closed, crashes or
 - Open, edit and save Word, Excel and PowerPoint files: `.docx` `.xlsx` `.pptx`, and the older `.doc` `.xls` `.ppt`.
 - OpenDocument (`.odt` `.ods` `.odp`, plus flat `.fodt` `.fods` `.fodp`) and `.rtf`.
 - Apple **Pages, Numbers and Keynote** files open read-only.
+- Documents open for reading, so a stray tap can't change them: tap the pencil button at the bottom right of the page to start editing.
 - Find in document (with match counts), zoom buttons and zoom levels (fit width, 50%–400%), and a live word count for Word documents.
 - **Export or share as PDF**, ready for printing (Android's share sheet includes Print).
 - Copy and paste with other apps.
@@ -73,7 +74,7 @@ The only web links in the app are at the bottom of Settings (the GitHub page and
    - `x86_64` for emulators and some Chromebooks.
 2. Open it and allow installing from your browser or file manager when Android asks.
 
-Requires **Android 12 or newer**. The download is about 115 MB, because a whole office engine lives inside.
+Requires **Android 12 or newer**. The download is about 115 MB, because a whole office engine lives inside. Office documents also need a reasonably recent **Android System WebView** (version 98 or newer, from 2022); if yours is older, Libreon says so, and updating it from your app store fixes it.
 
 ## How it works
 
@@ -104,7 +105,7 @@ More detail: [architecture](docs/architecture.md) and [milestones and test resul
 
 ## Status
 
-This is a **beta**. It has been tested on a **Samsung Galaxy S24 Ultra** (Android 17, One UI 9), the Android emulator and BlueStacks. More real-phone testing is ongoing, and [bug reports](../../issues/new?template=bug_report.yml) are very welcome. Known gaps:
+This is a **beta**. It has been tested on a **Samsung Galaxy S24 Ultra** (Android 17, One UI 9), the Android emulator (including Android 12) and BlueStacks. More real-phone testing is ongoing, and [bug reports](../../issues/new?template=bug_report.yml) are very welcome. Known gaps:
 - Office documents export to PDF only (other formats aren't offered yet). Printing goes through Share as PDF.
 - Scanned PDFs have no text recognition (OCR) yet, and the existing text of a PDF can't be edited.
 - Apple iWork files are view-only.
