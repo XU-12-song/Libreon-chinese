@@ -26,10 +26,6 @@ I got tired of that. Every popular Android office app seemed to want my money ev
 
 ## What it does
 
-**Your unsaved work survives anything**
-
-Most office apps only keep what you have saved: if the app is closed, crashes or the phone restarts, your recent edits are gone. Libreon keeps a private recovery copy of every document you're editing, updated a couple of seconds after you stop typing and again whenever you leave the app. Swipe it away, let Android close it, have it crash or let the battery die: when you open Libreon again, all your tabs come back with every unsaved change, and you save when you're ready. The recovery copies stay on your phone, inside the app.
-
 **Office documents**
 - Open, edit and save Word, Excel and PowerPoint files: `.docx` `.xlsx` `.pptx`, and the older `.doc` `.xls` `.ppt`.
 - OpenDocument (`.odt` `.ods` `.odp`, plus flat `.fodt` `.fods` `.fodp`) and `.rtf`.
@@ -54,7 +50,8 @@ Most office apps only keep what you have saved: if the app is closed, crashes or
 - Find and replace, go to line, and a word count in the status line.
 
 **Everywhere**
-- **Tabs:** keep lots of documents open at once. They're all still there, unsaved changes included, the next time you open the app (see above).
+- **Tabs:** keep lots of documents open at once.
+- **Your unsaved work survives anything.** Libreon keeps a private recovery copy of every document you're editing, updated a couple of seconds after you stop typing. If the app is closed, crashes or the phone restarts, all your tabs come back with every unsaved change, and you save when you're ready. The recovery copies stay on your phone, inside the app.
 - **Search** your open, recent and recently closed files by name.
 - **Share** any open document, unsaved edits included, and read it **full screen**.
 - **Word count** for any document and for your selection.
