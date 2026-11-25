@@ -9,7 +9,9 @@ OUT="${1:?usage: finalize-lok.sh <third_party/lok>}"
 
 # Upstream bug: a few dark-theme icons (the slideshow button among them) keep the light
 # theme's dark grey, so on a dark toolbar they look disabled. Give them the dark theme's ink.
-grep -l 'fill="#3a3a38"' "$OUT/assets/dist/images/dark/"*.svg 2>/dev/null |
+# Newer builds already ship the corrected icons, in which case grep matches nothing and
+# would fail the script under `set -e`.
+{ grep -l 'fill="#3a3a38"' "$OUT/assets/dist/images/dark/"*.svg 2>/dev/null || true; } |
   xargs -r sed -i 's/fill="#3a3a38"/fill="#fafafa"/g'
 
 # The page links branding.css for host-specific styles; upstream ships none, so ours goes there.

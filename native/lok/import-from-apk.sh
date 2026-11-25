@@ -13,7 +13,9 @@ OUT="$REPO/third_party/lok"
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
-unzip -q "$APK" "lib/$ABI/*" "assets/*" -d "$TMP"
+# Extract the whole APK: an "assets/*" filter only matches the top level on some unzip
+# builds, which silently drops the engine's asset tree.
+unzip -q "$APK" -d "$TMP"
 [ -f "$TMP/lib/$ABI/libandroidapp.so" ] || { echo "no Office engine in $APK for $ABI" >&2; exit 1; }
 
 # Native libraries are per ABI; assets are the same for every ABI.
