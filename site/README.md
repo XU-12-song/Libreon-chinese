@@ -12,27 +12,10 @@ python site/_src/build.py "path/to/repo"
 
 The build inlines the fox artwork from `art/Libreon_Artwork_*.svg` wherever the template says `{{fox:Name}}`. GitHub Pages doesn't serve the `_src/` folder.
 
-## Adding screenshots and video
+## Posters and video
 
-The "See it" section has seven placeholder slots, each marked with a `<!-- SLOT ... -->` comment in the template. To fill a slot, replace its one placeholder line:
+The "See it" section shows the posters in a sideways strip, then the promo video below it.
 
-```html
-<div class="ph ph--doc" role="img" aria-label="Screenshot coming soon"></div>
-```
-
-with an image:
-
-```html
-<img src="assets/screens/office.png" alt="An Office document open for editing in Libreon" loading="lazy">
-```
-
-For the video slot (the first one), use a video instead:
-
-```html
-<video src="assets/video/promo.mp4" poster="assets/video/promo.jpg" controls playsinline preload="none"></video>
-```
-
-- The frames are phone-shaped (9 : 19.5). Images and video are cropped to fill the frame (`object-fit: cover`), so portrait phone screenshots fit best.
-- For a landscape video, add `shot--wide` to that slot's `<figure>` (`<figure class="shot shot--video shot--wide">`). The frame becomes 16 : 9.
-- Edit the `<figcaption>` under each frame to change its caption. Delete a whole `<figure>` to drop a slot.
-- Keep files small (about 1080 px tall WebP or PNG for screenshots, and a short compressed MP4 for video), and rebuild afterwards.
+- Posters live in `assets/posters/`: `posterN.webp` (600 × 900, shown in the strip) and `posterN-full.webp` (1200 × 1800, opened on tap). They are made from `art/Libreon_PosterN_v2.png`. The download poster (poster 1, with the QR code) comes last.
+- The video is `assets/video/libreon-promo.mp4` (720 × 1280, portrait), with `libreon-promo.webp` as its still frame before it plays.
+- To add, remove or reorder posters, edit the `<figure class="poster">` blocks in the template, keeping the `alt` text up to date, then rebuild.
