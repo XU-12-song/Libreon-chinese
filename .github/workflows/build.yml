@@ -64,7 +64,7 @@ jobs:
           echo "$KEYSTORE_BASE64" | base64 -d > signing/release.p12
 
       - name: Assemble the release APKs
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        run: bash gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Collect the APKs
         run: |
