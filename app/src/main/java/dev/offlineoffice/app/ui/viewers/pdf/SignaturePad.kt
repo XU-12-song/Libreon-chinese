@@ -67,7 +67,7 @@ fun SignaturePadDialog(initials: Boolean, onDismiss: () -> Unit, onDone: (Signat
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(shape = MaterialTheme.shapes.large, modifier = Modifier.padding(16.dp).widthIn(max = 720.dp)) {
             Column(Modifier.padding(16.dp)) {
-                Text(if (initials) "Draw your initials" else "Draw your signature", style = MaterialTheme.typography.titleLarge)
+                Text(if (initials) "绘制你的姓名缩写" else "绘制你的签名", style = MaterialTheme.typography.titleLarge)
                 Spacer(Modifier.size(12.dp))
                 Box(
                     Modifier
@@ -75,7 +75,7 @@ fun SignaturePadDialog(initials: Boolean, onDismiss: () -> Unit, onDone: (Signat
                         .aspectRatio(if (initials) 2f else 3f)
                         .background(Color.White, MaterialTheme.shapes.medium)
                         .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.medium)
-                        .semantics { contentDescription = if (initials) "Initials pad" else "Signature pad" }
+                        .semantics { contentDescription = if (initials) "姓名缩写绘制区" else "签名绘制区" }
                         .onSizeChanged { padSize = it }
                         .pointerInput(Unit) {
                             awaitEachGesture {
@@ -117,22 +117,22 @@ fun SignaturePadDialog(initials: Boolean, onDismiss: () -> Unit, onDone: (Signat
                         }
                     }
                     if (strokes.isEmpty() && current == null) {
-                        Text("Sign here", Modifier.align(Alignment.Center), color = Color.LightGray, style = MaterialTheme.typography.headlineSmall)
+                        Text("在此签名", Modifier.align(Alignment.Center), color = Color.LightGray, style = MaterialTheme.typography.headlineSmall)
                     }
                 }
                 Spacer(Modifier.size(12.dp))
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ColorDot(InkBlack, "Black", selected = color == InkBlack) { color = InkBlack }
-                    ColorDot(InkBlue, "Blue", selected = color == InkBlue) { color = InkBlue }
+                    ColorDot(InkBlack, "黑色", selected = color == InkBlack) { color = InkBlack }
+                    ColorDot(InkBlue, "蓝色", selected = color == InkBlue) { color = InkBlue }
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = { strokes.clear() }) { Text("Clear") }
-                    TextButton(onClick = onDismiss) { Text("Cancel") }
+                    TextButton(onClick = { strokes.clear() }) { Text("清除") }
+                    TextButton(onClick = onDismiss) { Text("取消") }
                     TextButton(
                         enabled = strokes.isNotEmpty(),
                         onClick = {
                             onDone(SignatureInk(padSize.width.toFloat(), padSize.height.toFloat(), color.toArgb(), strokes.toList()))
                         },
-                    ) { Text("Done") }
+                    ) { Text("完成") }
                 }
             }
         }
@@ -149,7 +149,7 @@ private fun ColorDot(color: Color, label: String, selected: Boolean, onClick: ()
             .padding(5.dp)
             .background(color, CircleShape)
             .semantics {
-                stateDescription = if (selected) "Selected" else "Not selected"
+                stateDescription = if (selected) "已选中" else "未选中"
             }
             .clickable(role = Role.RadioButton, onClickLabel = label, onClick = onClick),
     )

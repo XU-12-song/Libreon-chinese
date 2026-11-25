@@ -36,7 +36,7 @@ class FileAccess(private val context: Context) {
             }
         }
         DocumentMeta(
-            displayName = name ?: uri.lastPathSegment?.substringAfterLast('/') ?: "Untitled",
+            displayName = name ?: uri.lastPathSegment?.substringAfterLast('/') ?: "未命名",
             mimeType = resolver.getType(uri),
             size = size,
             lastModified = lastModified(uri),
@@ -90,8 +90,8 @@ class FileAccess(private val context: Context) {
             }
             val written = resolver.openOutputStream(uri, "wt")?.use { out ->
                 source.inputStream().use { it.copyTo(out) }
-            } ?: throw IOException("Provider refused to open $uri for writing")
-            if (written != source.length()) throw IOException("Short write: $written of ${source.length()} bytes")
+            } ?: throw IOException("提供程序拒绝打开 $uri 进行写入")
+            if (written != source.length()) throw IOException("写入不完整：$written / ${source.length()} 字节")
             // Providers such as MediaStore update their SIZE column lazily, so verify by reading back.
             val readBack = resolver.openInputStream(uri)?.use { input ->
                 val buffer = ByteArray(64 * 1024)
@@ -104,7 +104,7 @@ class FileAccess(private val context: Context) {
                 total
             }
             if (readBack != null && readBack != source.length()) {
-                throw IOException("Verification failed: read back $readBack of ${source.length()} bytes")
+                throw IOException("校验失败：读回 $readBack / ${source.length()} 字节")
             }
             written
         }

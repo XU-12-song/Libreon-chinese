@@ -1,129 +1,129 @@
-<p align="center"><img src="art/libreon-store-icon-512.png" width="140" alt="Libreon: a fox curled around three coloured tiles"></p>
+<p align="center"><img src="art/libreon-store-icon-512.png" width="140" alt="Libreon：一只狐狸蜷绕在三块彩色方块周围"></p>
 
 <h1 align="center">Libreon</h1>
-<p align="center"><b>Work freely.</b><br>A private, fully offline office suite for Android. No ads, no subscriptions, no trackers, no AI.</p>
+<p align="center"><b>自由办公。</b><br>一款私密、完全离线的 Android 办公套件。无广告、无订阅、无追踪、无 AI。</p>
 
 <p align="center">
-  <a href="https://github.com/jainiakhil/Libreon/releases/latest"><img src="https://img.shields.io/badge/Download-Latest%20APK-2ea44f?style=for-the-badge&logo=android&logoColor=white" alt="Download the latest APK"></a>
-  <a href="https://jainiakhil.github.io/Libreon/"><img src="https://img.shields.io/badge/Website-jainiakhil.github.io%2FLibreon-fc4e2b?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Visit the Libreon website"></a>
-  <br><sub>Under <b>Assets</b>, pick the <code>arm64-v8a</code> APK: it's the one for almost every phone. <a href="#install">Install help</a></sub>
+  <a href="https://github.com/jainiakhil/Libreon/releases/latest"><img src="https://img.shields.io/badge/Download-Latest%20APK-2ea44f?style=for-the-badge&logo=android&logoColor=white" alt="下载最新 APK"></a>
+  <a href="https://jainiakhil.github.io/Libreon/"><img src="https://img.shields.io/badge/Website-jainiakhil.github.io%2FLibreon-fc4e2b?style=for-the-badge&logo=googlechrome&logoColor=white" alt="访问 Libreon 网站"></a>
+  <br><sub>在 <b>Assets</b> 下选择 <code>arm64-v8a</code> 的 APK：它适用于几乎所有手机。<a href="#install">安装帮助</a></sub>
 </p>
 
-<p align="center"><i>Beta: expect rough edges, and please report them.</i></p>
+<p align="center"><i>Beta 版：请做好遇到粗糙之处的准备，并请反馈问题。</i></p>
 
 ---
 
-## Why this exists
+## 为什么会有它
 
-You know the drill. You just want to open a Word file on your phone. Instead you get a full-screen ad, a "Go Premium!" pop-up, a nudge to sign in, another ad, a request to "let our AI summarise this for you", and then, finally, the document, with a banner ad stuck over the bottom third of it.
+你懂的。你只想在手机上打开一个 Word 文件。结果却先来一个全屏广告，一个“升级高级版！”弹窗，一次登录提示，又一个广告，一句“让我们的 AI 帮你总结一下”，最后终于看到文档——底部三分之一还压着一条横幅广告。
 
-I got tired of that. Every popular Android office app seemed to want my money every two seconds, my data all the time, or my patience for AI features nobody asked for. So I did something about it: I built a clean-room office app that does what those apps do, minus the junk.
+我受够了。每一款流行的 Android 办公应用似乎每两秒就想要我的钱、时时刻刻想要我的数据，或者考验我对没人要的 AI 功能的耐心。所以我做了点改变：我构建了一款干净重写的办公应用，能完成那些应用所做的事，只是去掉了那些乱七八糟的东西。
 
-**No ads. No payments. No trackers. No AI. No account. It doesn't even need the internet.** It opens your files, lets you edit them, never loses your unsaved changes, and stays out of your way. You can work freely.
+**无广告。无付费。无追踪。无 AI。无账号。甚至不需要联网。** 它能打开你的文件，让你编辑它们，从不丢失你未保存的改动，并且不碍你的事。你可以自由办公。
 
-**About the AI:** I built the Android app with two AI coding assistants, **Claude Code (Opus 5.5)** and **Google Antigravity (Gemini 3.8 Flash)**, while I designed it, reviewed the work and tested it on real phones. The parts that open, edit and save your documents are [LibreOffice](https://www.libreoffice.org/) and [PDFium](https://pdfium.googlesource.com/pdfium/), mature open-source engines written by people over decades. Yes, it's a little ironic that an app with no AI in it was built with AI: the AI wrote code; it didn't move into the app. And with no internet permission and every line of code public, you don't have to take my word for any of it.
+**关于 AI：** 这个 Android 应用由我借助两个 AI 编程助手 **Claude Code（Opus 5.5）** 和 **Google Antigravity（Gemini 3.8 Flash）** 构建，同时由我负责设计、审查代码并在真实手机上测试。打开、编辑和保存文档的部分是 [LibreOffice](https://www.libreoffice.org/) 和 [PDFium](https://pdfium.googlesource.com/pdfium/)，它们是由人们历经数十年打磨的成熟开源引擎。是的，一个内部没有 AI 的应用由 AI 构建，确实有点讽刺：AI 只是写了代码，并没有搬进应用里。而且它没有联网权限、每一行代码都公开，所以上面这些你都不必只听我的一面之词。
 
-"Clean room" means no code, resources or assets were taken from any existing app. Existing apps were only used to understand what features people expect. Everything here is written from scratch or comes from properly licensed open-source projects (listed below).
+“干净重写”（clean room）意味着没有从任何现有应用获取代码、资源或素材。现有应用只被用来了解用户期望哪些功能。这里的一切要么从头编写，要么来自许可合规的开源项目（见下文）。
 
-## What it does
+## 它能做什么
 
-**Office documents**
-- Open, edit and save Word, Excel and PowerPoint files: `.docx` `.xlsx` `.pptx`, and the older `.doc` `.xls` `.ppt`.
-- OpenDocument (`.odt` `.ods` `.odp`, plus flat `.fodt` `.fods` `.fodp`) and `.rtf`.
-- Apple **Pages, Numbers and Keynote** files open read-only.
-- Documents open for reading, so a stray tap can't change them: tap the pencil button at the bottom right of the page to start editing.
-- Find in document (with match counts), zoom buttons and zoom levels (fit width, 50%–400%), and a live word count for Word documents.
-- **Export or share as PDF**, ready for printing (Android's share sheet includes Print).
-- Copy and paste with other apps.
-- Tap a link to open it in your browser or mail app.
+**Office 文档**
+- 打开、编辑并保存 Word、Excel 和 PowerPoint 文件：`.docx` `.xlsx` `.pptx`，以及旧版 `.doc` `.xls` `.ppt`。
+- 支持 OpenDocument（`.odt` `.ods` `.odp`，以及扁平格式 `.fodt` `.fods` `.fodp`）和 `.rtf`。
+- Apple **Pages、Numbers 和 Keynote** 文件以只读方式打开。
+- 文档默认以阅读方式打开，误触不会改动内容：点按页面右下角的铅笔按钮即可开始编辑。
+- 在文档内查找（显示匹配数量）、缩放按钮和缩放级别（适应宽度、50%–400%），Word 文档还提供实时字数统计。
+- **导出或分享为 PDF**，可直接打印（Android 的分享面板包含“打印”）。
+- 与其他应用之间复制粘贴。
+- 点按链接即可在你的浏览器或邮件应用中打开。
 
 **PDF**
-- Smooth viewing with pinch zoom (up to 1600%, or zoomed out to see several pages), preset zoom levels, thumbnails and search.
-- Fill PDF forms, add text, check marks and crosses to flat forms, and **sign** with saved signatures.
-- **Highlight, underline or strike out text** by long-pressing and dragging, and **annotate** with freehand drawing, rectangles, ellipses and sticky notes. These are standard PDF annotations, so other PDF apps see them too.
-- **Page tools:** rotate, move, delete and extract pages, or insert the pages of another PDF.
-- Tap links to open them in your browser or mail app, or to jump to another page of the document.
-- Copy selected text and count its words.
+- 流畅查看，双指缩放最高 1600%（或缩小以同时看到多页）、预设缩放级别、缩略图和搜索。
+- 填写 PDF 表单，在扁平表单上添加文字、对勾和叉号，并使用已保存的签名**签署**。
+- 长按并拖动即可**高亮、加下划线或删除线**，还可**批注**：自由绘制、矩形、椭圆和便签。这些都是标准 PDF 注释，其他 PDF 应用也能看到。
+- **页面工具：**旋转、移动、删除和提取页面，或插入另一份 PDF 的页面。
+- 点按链接可在浏览器或邮件应用中打开，或跳转到文档的另一页。
+- 复制选中的文字并统计其字数。
 
-**Text**
-- Plain text, Markdown (with live preview), CSV (with a table view) and JSON (with formatting), plus many code and config file types.
-- Handles huge files (hundreds of MB) without choking.
-- Find and replace, go to line, and a word count in the status line.
+**文本**
+- 纯文本、Markdown（带实时预览）、CSV（带表格视图）和 JSON（带格式化），另支持多种代码和配置文件类型。
+- 可处理超大文件（几百 MB）而不会卡死。
+- 查找替换、跳转到行，状态栏中还显示字数统计。
 
-**Everywhere**
-- **Tabs:** keep lots of documents open at once.
-- **Your unsaved work survives anything.** Libreon keeps a private recovery copy of every document you're editing, updated a couple of seconds after you stop typing. If the app is closed, crashes or the phone restarts, all your tabs come back with every unsaved change, and you save when you're ready. The recovery copies stay on your phone, inside the app.
-- **Search** your open, recent and recently closed files by name.
-- **Share** any open document, unsaved edits included, and read it **full screen**.
-- **Word count** for any document and for your selection.
-- Light, dark or follow-the-system themes (set in Settings), "light pages" for a single document while the app is dark, and a themed icon that matches your wallpaper.
-- Screen-reader friendly controls.
+**处处皆是**
+- **标签页：**可同时打开大量文档。
+- **未保存的工作永不丢失。** Libreon 会为你正在编辑的每一份文档保留一份私密的恢复副本，在你停止输入几秒后更新。即使应用被关闭、崩溃或手机重启，所有标签页都会连同每一处未保存的改动一起回来，你准备好时再保存。恢复副本留在你的手机内，存于应用之中。
+- 按名称**搜索**你打开过、最近使用和最近关闭的文件。
+- **分享**任何打开的文档（包括未保存的编辑），并可**全屏**阅读。
+- 对任何文档及所选内容进行**字数统计**。
+- 浅色、深色或跟随系统的主题（在设置中切换），应用处于深色时可让单份文档使用“浅色页面”，以及随壁纸变化的主题图标。
+- 对屏幕阅读器友好的控件。
 
-## Privacy
+## 隐私
 
-Libreon has **no internet permission at all**. Android itself stops it from going online. There are no accounts, no analytics, no crash reporters and no "cloud" anything. Your documents never leave your device.
+Libreon **完全没有联网权限**。Android 本身就会阻止它上网。没有账号、没有分析统计、没有崩溃上报、没有任何“云”功能。你的文档从不离开你的设备。
 
-The only web links in the app are at the bottom of Settings (the GitHub page and the coffee banner below). They open in your browser, and only if you tap them; Libreon itself still never goes online.
+应用中仅有的网页链接位于设置页面底部（GitHub 页面和下方的请喝咖啡横幅）。它们只在你点按时才在浏览器中打开；Libreon 本身始终不会上网。
 
-## Install
+## 安装
 
-1. Download the APK from the [latest release](https://github.com/jainiakhil/Libreon/releases/latest) (under **Assets**):
-   - `arm64-v8a` for almost every phone and tablet;
-   - `x86_64` for emulators and some Chromebooks.
-2. Open it and allow installing from your browser or file manager when Android asks.
+1. 从[最新版本](https://github.com/jainiakhil/Libreon/releases/latest)（**Assets** 下）下载 APK：
+   - `arm64-v8a` 适用于几乎所有手机和平板；
+   - `x86_64` 用于模拟器和部分 Chromebook。
+2. 打开它，当 Android 询问时允许从浏览器或文件管理器安装。
 
-Requires **Android 12 or newer**. The download is about 115 MB, because a whole office engine lives inside. Office documents also need a reasonably recent **Android System WebView** (version 98 or newer, from 2022); if yours is older, Libreon says so, and updating it from your app store fixes it.
+需要 **Android 12 或更新版本**。下载包约 115 MB，因为里面装着一整套办公引擎。Office 文档还需要较新的 **Android System WebView**（98 或更新版本，2022 年起）；如果你的版本太旧，Libreon 会提示，从应用商店更新即可解决。
 
-## How it works
+## 工作原理
 
-Libreon is a native Android app (Kotlin and Jetpack Compose) with three engines:
+Libreon 是一款原生 Android 应用（Kotlin 和 Jetpack Compose），内含三个引擎：
 
-| Part | What it uses |
+| 部件 | 使用什么 |
 |---|---|
-| **Office documents** | [LibreOffice](https://www.libreoffice.org/) core through LibreOfficeKit, with the [Collabora Online](https://www.collaboraonline.com/) web front-end running locally in a WebView. Each Office document runs in its own process, shown in the app through a shared surface, so a heavy document can't take the app down with it. |
-| **PDF** | [PDFium](https://pdfium.googlesource.com/pdfium/) (the PDF engine in Chrome) through a small JNI bridge, for rendering, forms, annotations and saving. |
-| **Text** | A custom editor built on Compose text fields, with streaming and line indexing for very large files, [commonmark-java](https://github.com/commonmark/commonmark-java) for Markdown, and its own CSV and JSON handling. |
+| **Office 文档** | [LibreOffice](https://www.libreoffice.org/) 核心，通过 LibreOfficeKit 接入，[Collabora Online](https://www.collaboraonline.com/) 网页前端在本地 WebView 中运行。每份 Office 文档都在独立进程中运行，并通过共享画面显示在应用里，因此一份重型文档不会把整个应用拖垮。 |
+| **PDF** | [PDFium](https://pdfium.googlesource.com/pdfium/)（Chrome 内置的 PDF 引擎），通过一个小型 JNI 桥接，用于渲染、表单、注释和保存。 |
+| **文本** | 基于 Compose 文本框构建的自定义编辑器，针对超大文件采用流式读取和行索引，[commonmark-java](https://github.com/commonmark/commonmark-java) 处理 Markdown，并自行实现 CSV 和 JSON 处理。 |
 
-Other details:
-- **Tabs and memory:** documents are "hot" (engine loaded) or "parked" (saved to a recovery copy and unloaded) depending on how much memory the phone has, so you can keep many tabs without running out.
-- **Saving:** files are written back to where they came from through Android's storage framework. If another app changed the file meanwhile, Libreon notices and asks before overwriting.
-- **Signing:** releases are signed with a private key that is not in this repository.
+其他细节：
+- **标签页与内存：**文档根据手机内存状况处于“热”状态（引擎已加载）或“停靠”状态（保存到恢复副本后卸载），因此你可以保留许多标签页而不会内存不足。
+- **保存：**文件通过 Android 存储框架写回原始位置。如果期间其他应用改动了该文件，Libreon 会发现并在覆盖前征求你的意见。
+- **签名：**发布版本使用一个不在本仓库中的私钥签名。
 
-## Building from source
+## 从源码构建
 
-You need Windows with WSL 2 (or Linux), the Android SDK and NDK, and a lot of disk space and patience. The Office engine takes a few hours to build.
+你需要带 WSL 2 的 Windows（或 Linux）、Android SDK 和 NDK，以及大量磁盘空间和耐心。Office 引擎需要数小时才能构建完成。
 
-1. **Office engine:** in a WSL distro, run `native/lok/provision.sh` once, then `native/lok/build-all.sh arm64-v8a` (and/or `x86_64`). This builds LibreOffice core and the Collabora front-end for Android and copies the results into `third_party/lok/`.
-2. **PDFium:** run `scripts/fetch-pdfium.sh` to fetch the prebuilt library into `third_party/pdfium/`.
-3. **App:** `./gradlew assembleRelease`. Without a signing key in `signing/`, release builds are signed with the debug key.
+1. **Office 引擎：**在 WSL 发行版中先运行一次 `native/lok/provision.sh`，然后运行 `native/lok/build-all.sh arm64-v8a`（和/或 `x86_64`）。这会为 Android 构建 LibreOffice 核心和 Collabora 前端，并把结果复制到 `third_party/lok/`。
+2. **PDFium：**运行 `scripts/fetch-pdfium.sh` 将预构建库下载到 `third_party/pdfium/`。
+3. **应用：**`./gradlew assembleRelease`。如果 `signing/` 中没有签名密钥，发布构建将使用调试密钥签名。
 
-The icon layers are generated from the artwork in `art/` by `art/make_icons.py`.
+图标各图层由 `art/make_icons.py` 从 `art/` 中的美术素材生成。
 
-More detail: [architecture](docs/architecture.md) and [milestones and test results](docs/milestones.md).
+更多细节见：[架构](docs/architecture.md) 和[里程碑与测试结果](docs/milestones.md)。
 
-## Status
+## 状态
 
-This is a **beta**. It has been tested on a **Samsung Galaxy S24 Ultra** (Android 17, One UI 9), the Android emulator (including Android 12) and BlueStacks. More real-phone testing is ongoing, and [bug reports](../../issues/new?template=bug_report.yml) are very welcome. Known gaps:
-- Office documents export to PDF only (other formats aren't offered yet). Printing goes through Share as PDF.
-- Scanned PDFs have no text recognition (OCR) yet, and the existing text of a PDF can't be edited.
-- Apple iWork files are view-only.
+这是一个 **Beta** 版本。它已在 **Samsung Galaxy S24 Ultra**（Android 17、One UI 9）、Android 模拟器（包括 Android 12）和 BlueStacks 上测试过。更多真机测试仍在进行中，非常欢迎[提交 bug 报告](../../issues/new?template=bug_report.yml)。已知的不足：
+- Office 文档目前只能导出为 PDF（尚未提供其他格式）。打印通过“分享为 PDF”完成。
+- 扫描件 PDF 尚不支持文字识别（OCR），并且 PDF 中已有的文字无法编辑。
+- Apple iWork 文件只能查看。
 
-## Support Libreon
+## 支持 Libreon
 
-Libreon is free and always will be: no ads, no subscriptions, no "premium" version, no nagging. If it saves you some money or frustration and you'd like to say thanks, you can [buy me a coffee](https://buymeacoffee.com/jainiakhil).
+Libreon 免费，而且永远免费：无广告、无订阅、没有“高级版”、没有骚扰。如果它为你省下了一些钱或减少了一些烦恼，你想表示感谢，可以[请我喝杯咖啡](https://buymeacoffee.com/jainiakhil)。
 
-That's the **only** place it will ever come up: a small banner at the very bottom of Settings (⋮ → Settings). No pop-ups, no reminders, no features held back. Ignoring it is completely fine.
+这是它**唯一**会出现的地方：设置页面（⋮ → 设置）最底部的一个小横幅。没有弹窗、没有提醒、不扣留任何功能。完全可以选择忽略。
 
-## Contributing
+## 参与贡献
 
-Bug reports, ideas and fixes are all welcome, and you don't need to be a developer to help.
+Bug 报告、想法和修复都欢迎，而且你不需要是开发者也能帮忙。
 
-- **Found a bug?** [Open a bug report](../../issues/new?template=bug_report.yml). You can also get there from the app: ⋮ → Settings → *Report a problem or suggest a feature*.
-- **Have an idea?** [Suggest a feature](../../issues/new?template=feature_request.yml), or give a 👍 to an existing one.
-- **Want to fix something yourself?** Fork the repository, make your change on a branch, and open a pull request. [CONTRIBUTING.md](CONTRIBUTING.md) walks through it step by step, along with the few rules every change keeps (offline, no ads or trackers, clean room).
+- **发现了 bug？**请[提交 bug 报告](../../issues/new?template=bug_report.yml)。你也可以在应用里找到入口：⋮ → 设置 → *报告问题或建议功能*。
+- **有想法？**请[建议新功能](../../issues/new?template=feature_request.yml)，或给现有的建议点个 👍。
+- **想自己动手修复？**Fork 本仓库，在分支上完成修改，然后发起 pull request。[CONTRIBUTING.md](CONTRIBUTING.md) 会一步步带你完成，同时说明每次改动都要遵守的几条规则（离线、无广告或追踪器、干净重写）。
 
-## License
+## 许可证
 
-Libreon is free software, licensed under the [GNU General Public License v3.0 or later](LICENSE).
+Libreon 是自由软件，基于 [GNU 通用公共许可证第 3 版或更新版本](LICENSE) 发布。
 
-Its Office engine is based on LibreOffice, from The Document Foundation, and the Collabora Online front-end (both MPL-2.0). Libreon is not affiliated with The Document Foundation or Collabora. Every third-party component and its license is listed in [docs/licenses.md](docs/licenses.md) and on the app's "Open-source licenses" screen.
+它的 Office 引擎基于 The Document Foundation 的 LibreOffice 和 Collabora Online 前端（两者均为 MPL-2.0）。Libreon 与 The Document Foundation 或 Collabora 没有关联。每一个第三方组件及其许可证都列在 [docs/licenses.md](docs/licenses.md) 和应用的“开源许可证”页面中。

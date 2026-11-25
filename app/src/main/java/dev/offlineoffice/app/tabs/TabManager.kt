@@ -117,7 +117,7 @@ class TabManager(
 
             val meta = files.meta(uri)
             val kind = DocumentKind.detect(meta.displayName, meta.mimeType ?: mimeHint)
-                ?: throw IllegalArgumentException("Unsupported file: ${meta.displayName}")
+                ?: throw IllegalArgumentException("不支持的文件：${meta.displayName}")
             val id = UUID.randomUUID().toString()
             val persisted = files.tryPersist(uri, writable = true) || files.hasPersistedGrant(uri)
             val grant = when {
@@ -233,14 +233,14 @@ class TabManager(
     }
 
     suspend fun save(id: String): SaveResult = mutex.withLock {
-        val tab = _tabs.value.firstOrNull { it.id == id } ?: return@withLock SaveResult.Failed("No such tab")
+        val tab = _tabs.value.firstOrNull { it.id == id } ?: return@withLock SaveResult.Failed("没有此标签页")
         if (tab.grant == GrantType.PRIVATE_COPY) return@withLock SaveResult.NeedsSaveAs
         writeBack(tab, Uri.parse(tab.uri), checkExternal = true)
     }
 
     /** Saves to a new location chosen with ACTION_CREATE_DOCUMENT; the tab then points there. */
     suspend fun saveAs(id: String, target: Uri): SaveResult = mutex.withLock {
-        val tab = _tabs.value.firstOrNull { it.id == id } ?: return@withLock SaveResult.Failed("No such tab")
+        val tab = _tabs.value.firstOrNull { it.id == id } ?: return@withLock SaveResult.Failed("没有此标签页")
         files.tryPersist(target, writable = true)
         val result = writeBack(tab, target, checkExternal = false)
         if (result == SaveResult.Saved) {
@@ -259,9 +259,9 @@ class TabManager(
      * without saving it: for sharing and exporting.
      */
     suspend fun exportCopy(id: String, target: File, asPdf: Boolean = false) = mutex.withLock {
-        val session = (_sessions.value[id] as? SessionState.Ready)?.session ?: throw IOException("The document is not open")
+        val session = (_sessions.value[id] as? SessionState.Ready)?.session ?: throw IOException("文档未打开")
         if (asPdf) {
-            (session as? PdfExport ?: throw IOException("This document cannot be exported as PDF")).exportPdf(target)
+            (session as? PdfExport ?: throw IOException("此文档无法导出为 PDF")).exportPdf(target)
         } else {
             session.writeTo(target)
         }
@@ -269,7 +269,7 @@ class TabManager(
 
     /** Saves over the original even though it changed on disk (after the user confirmed). */
     suspend fun overwrite(id: String): SaveResult = mutex.withLock {
-        val tab = _tabs.value.firstOrNull { it.id == id } ?: return@withLock SaveResult.Failed("No such tab")
+        val tab = _tabs.value.firstOrNull { it.id == id } ?: return@withLock SaveResult.Failed("没有此标签页")
         writeBack(tab, Uri.parse(tab.uri), checkExternal = false)
     }
 
@@ -360,7 +360,7 @@ class TabManager(
                 return fresh
             }.onFailure { Log.w(TAG, "source unreachable, using private copy: ${tab.displayName}", it) }
         }
-        return File(checkNotNull(tab.workingCopyPath) { "No copy of ${tab.displayName} is available" })
+        return File(checkNotNull(tab.workingCopyPath) { "找不到 ${tab.displayName} 的副本" })
     }
 
     private fun createSession(tab: TabEntity): DocumentSession = when (tab.kind.engine) {
@@ -449,7 +449,7 @@ class TabManager(
 
     private suspend fun writeBack(tab: TabEntity, target: Uri, checkExternal: Boolean): SaveResult {
         val session = (_sessions.value[tab.id] as? SessionState.Ready)?.session
-            ?: return SaveResult.Failed("Document is not loaded")
+            ?: return SaveResult.Failed("文档未加载")
         val dir = File(recoveryRoot, tab.id).apply { mkdirs() }
         val temp = File(dir, "save.tmp")
         return try {

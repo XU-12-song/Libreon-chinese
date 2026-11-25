@@ -34,7 +34,7 @@ object JsonFormatter {
             val offset = Regex("at character (\\d+)").find(raw)?.groupValues?.get(1)?.toIntOrNull()
                 ?.coerceIn(0, text.length) ?: currentOffset(tokener, text)
             // org.json appends the whole input after " of "; keep only the description.
-            val description = raw.substringBefore(" at character").substringBefore(" of ").ifBlank { "Invalid JSON" }
+            val description = raw.substringBefore(" at character").substringBefore(" of ").ifBlank { "无效的 JSON" }
             val (line, column) = lineAndColumn(text, offset)
             Result.Invalid(description, line, column, offset)
         }

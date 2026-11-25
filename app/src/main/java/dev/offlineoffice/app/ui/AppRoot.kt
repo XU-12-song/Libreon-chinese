@@ -143,10 +143,10 @@ fun AppRoot(
     }
 
     fun handleSave(tab: TabEntity, result: SaveResult) = when (result) {
-        SaveResult.Saved -> onMessage("Saved ${tab.displayName}")
+        SaveResult.Saved -> onMessage("已保存 ${tab.displayName}")
         SaveResult.NeedsSaveAs -> onSaveAs(tab.id, tab.displayName)
         SaveResult.Conflict -> conflictTab = tab
-        is SaveResult.Failed -> onMessage("Save failed: ${result.message}")
+        is SaveResult.Failed -> onMessage("保存失败：${result.message}")
     }
 
     fun saveAdvice(tab: TabEntity) = ((sessions[tab.id] as? SessionState.Ready)?.session as? SaveAdvice)
@@ -183,21 +183,21 @@ fun AppRoot(
                     },
                     navigationIcon = {
                         if (active != null) {
-                            IconButton(onClick = { showHome = true }) { Icon(Icons.Outlined.Home, "Home") }
+                            IconButton(onClick = { showHome = true }) { Icon(Icons.Outlined.Home, "主页") }
                         }
                     },
                     actions = {
                         if (active != null) {
                             IconButton(onClick = { tools(active)?.findRequests?.tryEmit(Unit) }, enabled = tools(active) != null) {
-                                Icon(Icons.Outlined.Search, "Find in document")
+                                Icon(Icons.Outlined.Search, "在文档中查找")
                             }
-                            IconButton(onClick = { save(active) }, enabled = active.dirty) { Icon(Icons.Outlined.Save, "Save") }
+                            IconButton(onClick = { save(active) }, enabled = active.dirty) { Icon(Icons.Outlined.Save, "保存") }
                         }
                         if (wide && tabList.isNotEmpty()) {
                             IconButton(onClick = { settings.setTabBar(!tabBar) }) {
                                 Icon(
                                     if (tabBar) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
-                                    if (tabBar) "Hide tab bar" else "Show tab bar",
+                                    if (tabBar) "隐藏标签栏" else "显示标签栏",
                                 )
                             }
                         }
@@ -263,7 +263,7 @@ fun AppRoot(
                                 }
                             }
                         }
-                        is SessionState.Failed -> CenteredMessage("Could not open ${active.displayName}\n${state.message}")
+                        is SessionState.Failed -> CenteredMessage("无法打开 ${active.displayName}\n${state.message}")
                         else -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
                     }
                 }
@@ -280,7 +280,7 @@ fun AppRoot(
                 color = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.6f),
                 contentColor = MaterialTheme.colorScheme.inverseOnSurface,
             ) {
-                IconButton(onClick = { fullScreen = false }) { Icon(Icons.Outlined.FullscreenExit, "Exit full screen") }
+                IconButton(onClick = { fullScreen = false }) { Icon(Icons.Outlined.FullscreenExit, "退出全屏") }
             }
         }
     }
@@ -298,8 +298,8 @@ fun AppRoot(
     confirmClose?.let { tab ->
         AlertDialog(
             onDismissRequest = { confirmClose = null },
-            title = { Text("Save changes to ${tab.displayName}?") },
-            text = { Text("Your changes will be lost if you don't save them.") },
+            title = { Text("保存对 ${tab.displayName} 的更改？") },
+            text = { Text("如果不保存，你的更改将会丢失。") },
             confirmButton = {
                 TextButton(onClick = {
                     confirmClose = null
@@ -311,12 +311,12 @@ fun AppRoot(
                             if (result == SaveResult.Saved) tabs.close(tab.id) else handleSave(tab, result)
                         }
                     }
-                }) { Text("Save") }
+                }) { Text("保存") }
             },
             dismissButton = {
                 Row {
-                    TextButton(onClick = { confirmClose = null; tabs.close(tab.id) }) { Text("Don't save") }
-                    TextButton(onClick = { confirmClose = null }) { Text("Cancel") }
+                    TextButton(onClick = { confirmClose = null; tabs.close(tab.id) }) { Text("不保存") }
+                    TextButton(onClick = { confirmClose = null }) { Text("取消") }
                 }
             },
         )
@@ -324,16 +324,16 @@ fun AppRoot(
     conflictTab?.let { tab ->
         AlertDialog(
             onDismissRequest = { conflictTab = null },
-            title = { Text("File changed elsewhere") },
-            text = { Text("${tab.displayName} was modified by another app since you opened it.") },
+            title = { Text("文件已在其他地方被更改") },
+            text = { Text("${tab.displayName} 自你打开后已被另一个应用修改。") },
             confirmButton = {
                 TextButton(onClick = {
                     conflictTab = null
                     scope.launch { handleSave(tab, tabs.overwrite(tab.id)) }
-                }) { Text("Overwrite") }
+                }) { Text("覆盖") }
             },
             dismissButton = {
-                TextButton(onClick = { conflictTab = null; onSaveAs(tab.id, tab.displayName) }) { Text("Save as copy") }
+                TextButton(onClick = { conflictTab = null; onSaveAs(tab.id, tab.displayName) }) { Text("另存为副本") }
             },
         )
     }
@@ -352,9 +352,9 @@ fun AppRoot(
     if (showSettings) SettingsScreen(settings, onLicenses = { showLicenses = true }, onDismiss = { showSettings = false })
     confirmDiscard?.let { tab ->
         ConfirmDialog(
-            title = "Discard changes to ${tab.displayName}?",
-            text = "Your edits since the last save will be lost and the document reopens as it was saved.",
-            confirm = "Discard",
+            title = "放弃对 ${tab.displayName} 的更改？",
+            text = "自上次保存以来的编辑将会丢失，文档将按已保存的状态重新打开。",
+            confirm = "放弃",
             onConfirm = { confirmDiscard = null; tabs.discardChanges(tab.id) },
             onDismiss = { confirmDiscard = null },
         )
@@ -362,23 +362,23 @@ fun AppRoot(
     if (confirmCloseAll) {
         val unsaved = tabList.count { it.dirty }
         ConfirmDialog(
-            title = "Close all tabs?",
+            title = "关闭所有标签页？",
             text = if (unsaved > 0) {
-                "$unsaved ${if (unsaved == 1) "tab has" else "tabs have"} unsaved changes, which will be lost."
+                "$unsaved 个标签页有未保存的更改，将会丢失。"
             } else {
-                "All ${tabList.size} open documents will be closed. You can reopen them from Recently closed."
+                "所有 ${tabList.size} 份打开的文档将被关闭。你可以从“最近关闭”中重新打开它们。"
             },
-            confirm = "Close all",
+            confirm = "全部关闭",
             onConfirm = { confirmCloseAll = false; showHome = false; tabs.closeAll() },
             onDismiss = { confirmCloseAll = false },
         )
     }
     if (confirmClearHome) {
         ConfirmDialog(
-            title = "Clear Home?",
-            text = "This closes every open tab and removes all recent and recently closed files from Home. " +
-                "Unsaved changes are lost. Your files themselves are not deleted.",
-            confirm = "Clear",
+            title = "清空主页？",
+            text = "这会关闭所有打开的标签页，并从主页移除全部最近使用和最近关闭的文件。" +
+                "未保存的更改将会丢失。你的文件本身不会被删除。",
+            confirm = "清空",
             onConfirm = { confirmClearHome = false; tabs.clearHome() },
             onDismiss = { confirmClearHome = false },
         )
@@ -415,49 +415,49 @@ private fun OverflowMenu(
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
-        IconButton(onClick = { expanded = true }) { Icon(Icons.Outlined.MoreVert, "More") }
+        IconButton(onClick = { expanded = true }) { Icon(Icons.Outlined.MoreVert, "更多") }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
-                text = { Text("Open…") },
+                text = { Text("打开…") },
                 leadingIcon = { Icon(Icons.Outlined.FolderOpen, null) },
                 onClick = { expanded = false; onOpen() },
             )
             if (hasActive) {
                 DropdownMenuItem(
-                    text = { Text("Save as…") },
+                    text = { Text("另存为…") },
                     leadingIcon = { Icon(Icons.Outlined.SaveAs, null) },
                     onClick = { expanded = false; onSaveAs() },
                 )
                 DropdownMenuItem(
-                    text = { Text("Share") },
+                    text = { Text("分享") },
                     leadingIcon = { Icon(Icons.Outlined.Share, null) },
                     onClick = { expanded = false; onShare(false) },
                 )
                 onExportPdf?.let { export ->
                     DropdownMenuItem(
-                        text = { Text("Share as PDF") },
+                        text = { Text("分享为 PDF") },
                         leadingIcon = { Icon(Icons.Outlined.PictureAsPdf, null) },
                         onClick = { expanded = false; onShare(true) },
                     )
                     DropdownMenuItem(
-                        text = { Text("Export as PDF…") },
+                        text = { Text("导出为 PDF…") },
                         leadingIcon = { Icon(Icons.Outlined.SaveAlt, null) },
                         onClick = { expanded = false; export() },
                     )
                 }
                 DropdownMenuItem(
-                    text = { Text("Full screen") },
+                    text = { Text("全屏") },
                     leadingIcon = { Icon(Icons.Outlined.Fullscreen, null) },
                     onClick = { expanded = false; onFullScreen() },
                 )
                 DropdownMenuItem(
-                    text = { Text("Word count") },
+                    text = { Text("字数统计") },
                     leadingIcon = { Icon(Icons.Outlined.Numbers, null) },
                     onClick = { expanded = false; onWordCount() },
                 )
                 if (lightPages != null) {
                     DropdownMenuItem(
-                        text = { Text("Light pages") },
+                        text = { Text("浅色页面") },
                         leadingIcon = { Icon(Icons.Outlined.LightMode, null) },
                         trailingIcon = { Checkbox(checked = lightPages, onCheckedChange = null) },
                         onClick = { expanded = false; onLightPages(!lightPages) },
@@ -465,33 +465,33 @@ private fun OverflowMenu(
                 }
                 onDiscard?.let { discard ->
                     DropdownMenuItem(
-                        text = { Text("Discard changes") },
+                        text = { Text("放弃更改") },
                         leadingIcon = { Icon(Icons.AutoMirrored.Outlined.Undo, null) },
                         onClick = { expanded = false; discard() },
                     )
                 }
                 DropdownMenuItem(
-                    text = { Text("Close tab") },
+                    text = { Text("关闭标签页") },
                     leadingIcon = { Icon(Icons.Outlined.Close, null) },
                     onClick = { expanded = false; onClose() },
                 )
             }
             onCloseAll?.let { closeAll ->
                 DropdownMenuItem(
-                    text = { Text("Close all tabs") },
+                    text = { Text("关闭所有标签页") },
                     leadingIcon = { Icon(Icons.Outlined.ClearAll, null) },
                     onClick = { expanded = false; closeAll() },
                 )
             }
             onClearHome?.let { clear ->
                 DropdownMenuItem(
-                    text = { Text("Clear Home") },
+                    text = { Text("清空主页") },
                     leadingIcon = { Icon(Icons.Outlined.CleaningServices, null) },
                     onClick = { expanded = false; clear() },
                 )
             }
             DropdownMenuItem(
-                text = { Text("Settings") },
+                text = { Text("设置") },
                 leadingIcon = { Icon(Icons.Outlined.Settings, null) },
                 onClick = { expanded = false; onSettings() },
             )
@@ -540,7 +540,7 @@ private fun ConfirmDialog(title: String, text: String, confirm: String, onConfir
         title = { Text(title) },
         text = { Text(text) },
         confirmButton = { TextButton(onClick = onConfirm) { Text(confirm, color = MaterialTheme.colorScheme.error) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
     )
 }
 
@@ -548,9 +548,9 @@ private fun ConfirmDialog(title: String, text: String, confirm: String, onConfir
 private fun RestoredBanner(onKeep: () -> Unit, onDiscard: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.secondaryContainer) {
         Row(Modifier.padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text("Unsaved changes were restored.", Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-            TextButton(onClick = onDiscard) { Text("Discard") }
-            TextButton(onClick = onKeep) { Text("Keep") }
+            Text("未保存的更改已恢复。", Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+            TextButton(onClick = onDiscard) { Text("放弃") }
+            TextButton(onClick = onKeep) { Text("保留") }
         }
     }
 }

@@ -36,18 +36,18 @@ fun GoToLineDialog(lineCount: Int, onGo: (Int) -> Unit, onDismiss: () -> Unit) {
     val line = input.toIntOrNull()?.takeIf { it in 1..lineCount }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Go to line") },
+        title = { Text("跳转到行") },
         text = {
             OutlinedTextField(
                 value = input,
                 onValueChange = { v -> input = v.filter(Char::isDigit).take(10) },
-                label = { Text("Line (1–$lineCount)") },
+                label = { Text("行（1–$lineCount）") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
         },
-        confirmButton = { TextButton(onClick = { line?.let(onGo) }, enabled = line != null) { Text("Go") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = { line?.let(onGo) }, enabled = line != null) { Text("跳转") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
     )
 }
 
@@ -64,25 +64,25 @@ fun EncodingDialog(current: TextFormat, editable: Boolean, onApply: (TextFormat)
     val endings = (listOf(LineEnding.LF, LineEnding.CRLF, LineEnding.CR) + current.lineEnding).distinct()
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Encoding and line endings") },
+        title = { Text("编码和换行符") },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 Text(
-                    if (editable) "Saving keeps the file's original format. Change it here only to convert the file."
-                    else "This large file is read-only.",
+                    if (editable) "保存时会保持文件的原始格式。只有想转换文件时，才在此处更改。"
+                    else "这个大文件是只读的。",
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                Text("Encoding", Modifier.padding(top = 12.dp), style = MaterialTheme.typography.titleSmall)
+                Text("编码", Modifier.padding(top = 12.dp), style = MaterialTheme.typography.titleSmall)
                 charsets.forEach { choice ->
-                    ChoiceRow(choice.first + if (choice.second) " with BOM" else "", charset == choice, editable) { charset = choice }
+                    ChoiceRow(choice.first + if (choice.second) "（带 BOM）" else "", charset == choice, editable) { charset = choice }
                 }
-                Text("Line endings", Modifier.padding(top = 12.dp), style = MaterialTheme.typography.titleSmall)
+                Text("换行符", Modifier.padding(top = 12.dp), style = MaterialTheme.typography.titleSmall)
                 endings.forEach { e ->
                     val label = when (e) {
-                        LineEnding.LF -> "LF (Unix, macOS)"
-                        LineEnding.CRLF -> "CRLF (Windows)"
-                        LineEnding.CR -> "CR (classic Mac)"
-                        LineEnding.MIXED -> "Mixed (kept per line)"
+                        LineEnding.LF -> "LF（Unix、macOS）"
+                        LineEnding.CRLF -> "CRLF（Windows）"
+                        LineEnding.CR -> "CR（经典 Mac）"
+                        LineEnding.MIXED -> "混合（逐行保留）"
                     }
                     ChoiceRow(label, ending == e, editable) { ending = e }
                 }
@@ -90,12 +90,12 @@ fun EncodingDialog(current: TextFormat, editable: Boolean, onApply: (TextFormat)
         },
         confirmButton = {
             if (editable) {
-                TextButton(onClick = { onApply(TextFormat(charset.first, charset.second, ending)) }) { Text("Apply") }
+                TextButton(onClick = { onApply(TextFormat(charset.first, charset.second, ending)) }) { Text("应用") }
             } else {
-                TextButton(onClick = onDismiss) { Text("Close") }
+                TextButton(onClick = onDismiss) { Text("关闭") }
             }
         },
-        dismissButton = { if (editable) TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { if (editable) TextButton(onClick = onDismiss) { Text("取消") } },
     )
 }
 
@@ -117,17 +117,17 @@ fun LinkDialog(url: String, onDismiss: () -> Unit) {
     val clipboard = LocalClipboardManager.current
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Link") },
+        title = { Text("链接") },
         text = {
             Column {
-                Text("Libreon does not open links.", style = MaterialTheme.typography.bodyMedium)
+                Text("Libreon 不会打开链接。", style = MaterialTheme.typography.bodyMedium)
                 Text(url, Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodySmall)
             }
         },
         confirmButton = {
-            TextButton(onClick = { clipboard.setText(AnnotatedString(url)); onDismiss() }) { Text("Copy link") }
+            TextButton(onClick = { clipboard.setText(AnnotatedString(url)); onDismiss() }) { Text("复制链接") }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("关闭") } },
     )
 }
 
@@ -135,14 +135,14 @@ fun LinkDialog(url: String, onDismiss: () -> Unit) {
 fun JsonErrorDialog(message: String, line: Int, column: Int, onShow: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Invalid JSON") },
+        title = { Text("无效的 JSON") },
         text = {
             Column {
                 Text(message, style = MaterialTheme.typography.bodyMedium)
-                Text("Line $line, column $column", Modifier.padding(top = 8.dp), style = MaterialTheme.typography.titleSmall)
+                Text("第 $line 行，第 $column 列", Modifier.padding(top = 8.dp), style = MaterialTheme.typography.titleSmall)
             }
         },
-        confirmButton = { TextButton(onClick = onShow) { Text("Show") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        confirmButton = { TextButton(onClick = onShow) { Text("显示") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("关闭") } },
     )
 }

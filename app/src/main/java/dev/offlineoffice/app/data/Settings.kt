@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.update
 
 /** App preferences, kept in SharedPreferences and exposed as state. */
 class Settings(context: Context) {
-    enum class ThemeMode(val label: String) { SYSTEM("Follow system"), LIGHT("Light"), DARK("Dark") }
+    enum class ThemeMode(val label: String) { SYSTEM("跟随系统"), LIGHT("浅色"), DARK("深色") }
 
     private val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 

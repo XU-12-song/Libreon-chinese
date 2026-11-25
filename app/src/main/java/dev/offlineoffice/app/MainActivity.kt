@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
                     contentResolver.openOutputStream(uri, "wt")!!.use { out -> file.inputStream().use { it.copyTo(out) } }
                 }
             }
-            Toast.makeText(this@MainActivity, if (result.isSuccess) "PDF saved" else "Could not save the PDF", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@MainActivity, if (result.isSuccess) "PDF 已保存" else "无法保存 PDF", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -127,7 +127,7 @@ class MainActivity : ComponentActivity() {
             val dir = File(cacheDir, "share").apply { deleteRecursively(); mkdirs() }
             val file = File(dir, name)
             runCatching { app.tabs.exportCopy(tabId, file, asPdf) }.onFailure {
-                Toast.makeText(this@MainActivity, "Could not share: ${it.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MainActivity, "无法分享：${it.message}", Toast.LENGTH_LONG).show()
                 return@launch
             }
             val uri = FileProvider.getUriForFile(this@MainActivity, "$packageName.files", file)
@@ -148,7 +148,7 @@ class MainActivity : ComponentActivity() {
             val dir = File(cacheDir, "export").apply { deleteRecursively(); mkdirs() }
             val file = File(dir, "export.pdf")
             runCatching { app.tabs.exportCopy(tabId, file, asPdf = true) }.onFailure {
-                Toast.makeText(this@MainActivity, "Could not export: ${it.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MainActivity, "无法导出：${it.message}", Toast.LENGTH_LONG).show()
                 return@launch
             }
             pendingExport = file
@@ -172,14 +172,14 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             app.ready.await()
             runCatching { app.tabs.open(uri, origin, mimeHint) }
-                .onFailure { Toast.makeText(this@MainActivity, it.message ?: "Cannot open file", Toast.LENGTH_LONG).show() }
+                .onFailure { Toast.makeText(this@MainActivity, it.message ?: "无法打开文件", Toast.LENGTH_LONG).show() }
         }
     }
 
     private fun reportSave(result: SaveResult) {
         val text = when (result) {
-            SaveResult.Saved -> "Saved"
-            is SaveResult.Failed -> "Save failed: ${result.message}"
+            SaveResult.Saved -> "已保存"
+            is SaveResult.Failed -> "保存失败：${result.message}"
             else -> return
         }
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()

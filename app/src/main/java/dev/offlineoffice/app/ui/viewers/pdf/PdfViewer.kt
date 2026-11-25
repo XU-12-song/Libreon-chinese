@@ -136,7 +136,7 @@ fun PdfViewer(session: PdfSession) {
             )
         }
         if (session.formType == FormType.XFA_FULL) {
-            Notice("This form uses XFA, which is not supported. Only its static content is shown and it cannot be filled.")
+            Notice("此表单使用 XFA，暂不支持。仅显示其静态内容，且无法填写。")
         }
         if (state.searchOpen) SearchBar(state)
 
@@ -174,7 +174,7 @@ fun PdfViewer(session: PdfSession) {
             // Floats over the pages so the layout (and the tap target) does not shift when it goes.
             state.tool?.let { tool ->
                 Box(Modifier.align(Alignment.TopCenter).padding(8.dp)) {
-                    Notice(tool.hint, action = "Cancel") { state.tool = null }
+                    Notice(tool.hint, action = "取消") { state.tool = null }
                 }
             }
             state.selection?.let { selection ->
@@ -182,8 +182,8 @@ fun PdfViewer(session: PdfSession) {
             }
             state.selectedHighlight?.let { annotation ->
                 Box(Modifier.align(Alignment.TopCenter).padding(8.dp)) {
-                    val label = if (annotation.type == AnnotType.NOTE) "Note: ${state.selectedNoteText.orEmpty()}" else annotation.type.label
-                    Notice(label, action = "Remove", onAction = state::removeSelectedHighlight)
+                    val label = if (annotation.type == AnnotType.NOTE) "注释：${state.selectedNoteText.orEmpty()}" else annotation.type.label
+                    Notice(label, action = "删除", onAction = state::removeSelectedHighlight)
                 }
             }
             state.drawTool?.let { tool ->
@@ -256,18 +256,18 @@ private fun PdfToolbar(state: PdfViewerState, onThumbnails: () -> Unit, onSign: 
             Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onThumbnails) { Icon(Icons.Outlined.GridView, "Pages") }
+            IconButton(onClick = onThumbnails) { Icon(Icons.Outlined.GridView, "页面") }
             IconButton(onClick = { state.searchOpen = !state.searchOpen; if (!state.searchOpen) state.closeSearch() }) {
-                Icon(Icons.Outlined.Search, "Search")
+                Icon(Icons.Outlined.Search, "查找")
             }
             IconButton(onClick = { state.zoomBy(1 / 1.25f) }, enabled = state.zoom > state.minZoom * 1.001f) {
-                Icon(Icons.Outlined.ZoomOut, "Zoom out")
+                Icon(Icons.Outlined.ZoomOut, "缩小")
             }
             Box {
                 TextButton(onClick = { zoomMenu = true }) { Text("${state.percent}%", style = MaterialTheme.typography.labelLarge) }
                 DropdownMenu(expanded = zoomMenu, onDismissRequest = { zoomMenu = false }) {
-                    DropdownMenuItem(text = { Text("Fit width") }, onClick = { zoomMenu = false; state.zoomTo(1f) })
-                    DropdownMenuItem(text = { Text("Fit page") }, onClick = { zoomMenu = false; state.zoomTo(state.fitPageZoom) })
+                    DropdownMenuItem(text = { Text("适合宽度") }, onClick = { zoomMenu = false; state.zoomTo(1f) })
+                    DropdownMenuItem(text = { Text("适合页面") }, onClick = { zoomMenu = false; state.zoomTo(state.fitPageZoom) })
                     PdfViewerState.ZOOM_PRESETS.forEach { percent ->
                         val zoom = state.zoomForPercent(percent)
                         if (zoom in state.minZoom..state.maxZoom) {
@@ -277,40 +277,40 @@ private fun PdfToolbar(state: PdfViewerState, onThumbnails: () -> Unit, onSign: 
                 }
             }
             IconButton(onClick = { state.zoomBy(1.25f) }, enabled = state.zoom < state.maxZoom * 0.999f) {
-                Icon(Icons.Outlined.ZoomIn, "Zoom in")
+                Icon(Icons.Outlined.ZoomIn, "放大")
             }
             Spacer(Modifier.width(8.dp))
             Box {
                 TextButton(onClick = { state.commitEdit(); annotateMenu = true }) {
                     Icon(Icons.Outlined.Brush, null, Modifier.size(20.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("Annotate")
+                    Text("批注")
                 }
                 DropdownMenu(expanded = annotateMenu, onDismissRequest = { annotateMenu = false }) {
                     DropdownMenuItem(
-                        text = { Text("Draw") },
+                        text = { Text("绘制") },
                         leadingIcon = { Icon(Icons.Outlined.Gesture, null) },
                         onClick = { annotateMenu = false; state.startDrawing(DrawTool.INK) },
                     )
                     DropdownMenuItem(
-                        text = { Text("Rectangle") },
+                        text = { Text("矩形") },
                         leadingIcon = { Icon(Icons.Outlined.CropSquare, null) },
                         onClick = { annotateMenu = false; state.startDrawing(DrawTool.RECT) },
                     )
                     DropdownMenuItem(
-                        text = { Text("Ellipse") },
+                        text = { Text("椭圆") },
                         leadingIcon = { Icon(Icons.Outlined.Circle, null) },
                         onClick = { annotateMenu = false; state.startDrawing(DrawTool.ELLIPSE) },
                     )
                     DropdownMenuItem(
-                        text = { Text("Note") },
+                        text = { Text("注释") },
                         leadingIcon = { Icon(Icons.Outlined.StickyNote2, null) },
                         onClick = { annotateMenu = false; state.finishDrawing(); state.tool = PlaceTool.NOTE },
                     )
                     DropdownMenuItem(
-                        text = { Text("Highlight or underline text") },
+                        text = { Text("高亮或给文本加下划线") },
                         leadingIcon = { Icon(Icons.Outlined.BorderColor, null) },
-                        onClick = { annotateMenu = false; state.showMessage("Long-press a word and drag to select text, then choose a highlight colour, underline or strike-out.") },
+                        onClick = { annotateMenu = false; state.showMessage("长按某个词并拖动以选择文本，然后选择高亮颜色、下划线或删除线。") },
                     )
                 }
             }
@@ -318,18 +318,18 @@ private fun PdfToolbar(state: PdfViewerState, onThumbnails: () -> Unit, onSign: 
                 TextButton(onClick = { state.commitEdit(); state.finishDrawing(); fillMenu = true }) {
                     Icon(Icons.Outlined.EditNote, null, Modifier.size(20.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("Fill")
+                    Text("填写")
                 }
                 DropdownMenu(expanded = fillMenu, onDismissRequest = { fillMenu = false }) {
-                    DropdownMenuItem(text = { Text("Add text") }, onClick = { fillMenu = false; state.tool = PlaceTool.TEXT })
-                    DropdownMenuItem(text = { Text("Add check mark  ✓") }, onClick = { fillMenu = false; state.tool = PlaceTool.CHECK })
-                    DropdownMenuItem(text = { Text("Add cross mark  ✗") }, onClick = { fillMenu = false; state.tool = PlaceTool.CROSS })
+                    DropdownMenuItem(text = { Text("添加文本") }, onClick = { fillMenu = false; state.tool = PlaceTool.TEXT })
+                    DropdownMenuItem(text = { Text("添加对勾  ✓") }, onClick = { fillMenu = false; state.tool = PlaceTool.CHECK })
+                    DropdownMenuItem(text = { Text("添加叉号  ✗") }, onClick = { fillMenu = false; state.tool = PlaceTool.CROSS })
                 }
             }
             TextButton(onClick = onSign) {
                 Icon(Icons.Outlined.Draw, null, Modifier.size(20.dp))
                 Spacer(Modifier.width(4.dp))
-                Text("Sign")
+                Text("签名")
             }
         }
     }
@@ -341,34 +341,34 @@ private fun SearchBar(state: PdfViewerState) {
     LaunchedEffect(Unit) { focus.requestFocus() }
     Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = state::closeSearch) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Close search") }
+            IconButton(onClick = state::closeSearch) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "关闭查找") }
             OutlinedTextField(
                 value = state.searchQuery,
                 onValueChange = { state.searchQuery = it },
                 modifier = Modifier.weight(1f).focusRequester(focus),
-                placeholder = { Text("Find in document") },
+                placeholder = { Text("在文档中查找") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = { state.runSearch() }),
                 trailingIcon = {
                     if (state.searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { state.searchQuery = "" }) { Icon(Icons.Outlined.Close, "Clear") }
+                        IconButton(onClick = { state.searchQuery = "" }) { Icon(Icons.Outlined.Close, "清除") }
                     }
                 },
             )
             val total = state.searchMatches.size
             Text(
                 when {
-                    total == 0 && state.searching -> "Searching…"
+                    total == 0 && state.searching -> "搜索中…"
                     total == 0 -> ""
-                    else -> "${state.searchIndex + 1} of $total" + if (state.searching) "+" else ""
+                    else -> "${state.searchIndex + 1} / $total" + if (state.searching) "+" else ""
                 },
                 Modifier.padding(horizontal = 8.dp),
                 style = MaterialTheme.typography.labelLarge,
             )
-            IconButton(onClick = { state.stepMatch(-1) }, enabled = total > 0) { Icon(Icons.Outlined.KeyboardArrowUp, "Previous match") }
-            IconButton(onClick = { state.stepMatch(1) }, enabled = total > 0) { Icon(Icons.Outlined.KeyboardArrowDown, "Next match") }
-            TextButton(onClick = state::runSearch) { Text("Find") }
+            IconButton(onClick = { state.stepMatch(-1) }, enabled = total > 0) { Icon(Icons.Outlined.KeyboardArrowUp, "上一处匹配") }
+            IconButton(onClick = { state.stepMatch(1) }, enabled = total > 0) { Icon(Icons.Outlined.KeyboardArrowDown, "下一处匹配") }
+            TextButton(onClick = state::runSearch) { Text("查找") }
         }
     }
 }
@@ -382,24 +382,24 @@ private fun SelectionBar(state: PdfViewerState, selection: PdfTextSelection) {
     Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.secondaryContainer, shadowElevation = 4.dp) {
         // Scrolls sideways when the colours and actions do not fit a phone in portrait.
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(if (words == 1) "1 word" else "$words words", Modifier.padding(horizontal = 8.dp), style = MaterialTheme.typography.labelLarge)
-            TextButton(onClick = { clipboard.setText(AnnotatedString(selection.text.trim())); state.clearSelection() }) { Text("Copy") }
+            Text(if (words == 1) "1 个词" else "$words 个词", Modifier.padding(horizontal = 8.dp), style = MaterialTheme.typography.labelLarge)
+            TextButton(onClick = { clipboard.setText(AnnotatedString(selection.text.trim())); state.clearSelection() }) { Text("复制") }
             PdfViewerState.HIGHLIGHT_COLORS.forEachIndexed { i, argb ->
                 Box(
                     Modifier
                         .minimumInteractiveComponentSize()
                         .size(28.dp)
                         .background(Color(argb), CircleShape)
-                        .clickable(onClickLabel = "Highlight in ${HIGHLIGHT_NAMES[i]}", role = Role.Button) { state.highlightSelection(argb) },
+                        .clickable(onClickLabel = "以${HIGHLIGHT_NAMES[i]}高亮", role = Role.Button) { state.highlightSelection(argb) },
                 )
             }
             IconButton(onClick = { state.highlightSelection(UNDERLINE_COLOR, AnnotType.UNDERLINE) }) {
-                Icon(Icons.Outlined.FormatUnderlined, "Underline")
+                Icon(Icons.Outlined.FormatUnderlined, "下划线")
             }
             IconButton(onClick = { state.highlightSelection(STRIKE_COLOR, AnnotType.STRIKEOUT) }) {
-                Icon(Icons.Outlined.FormatStrikethrough, "Strike out")
+                Icon(Icons.Outlined.FormatStrikethrough, "删除线")
             }
-            IconButton(onClick = state::clearSelection) { Icon(Icons.Outlined.Close, "Clear selection") }
+            IconButton(onClick = state::clearSelection) { Icon(Icons.Outlined.Close, "清除选择") }
         }
     }
 }
@@ -422,17 +422,17 @@ private fun DrawBar(state: PdfViewerState, tool: DrawTool) {
                             .size(if (chosen) 30.dp else 24.dp)
                             .background(Color(argb), CircleShape)
                             .border(if (chosen) 3.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                            .clickable(onClickLabel = "Draw in ${INK_NAMES[i]}", role = Role.RadioButton) { state.inkColor = argb },
+                            .clickable(onClickLabel = "用${INK_NAMES[i]}绘制", role = Role.RadioButton) { state.inkColor = argb },
                     )
                 }
                 Spacer(Modifier.weight(1f))
-                TextButton(onClick = state::finishDrawing) { Text("Done") }
+                TextButton(onClick = state::finishDrawing) { Text("完成") }
             }
         }
     }
 }
 
-private val INK_NAMES = listOf("red", "blue", "green", "black")
+private val INK_NAMES = listOf("红色", "蓝色", "绿色", "黑色")
 
 /** Asks for a new note's text. */
 @Composable
@@ -442,18 +442,18 @@ private fun NoteDialog(onAdd: (String) -> Unit, onDismiss: () -> Unit) {
     LaunchedEffect(Unit) { focus.requestFocus() }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add a note") },
+        title = { Text("添加注释") },
         text = {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
                 modifier = Modifier.focusRequester(focus),
-                placeholder = { Text("Note") },
+                placeholder = { Text("注释") },
                 minLines = 3,
             )
         },
-        confirmButton = { TextButton(onClick = { onAdd(text) }, enabled = text.isNotBlank()) { Text("Add") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = { onAdd(text) }, enabled = text.isNotBlank()) { Text("添加") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
     )
 }
 
@@ -470,27 +470,27 @@ private fun LinkDialog(uri: String, onDismiss: () -> Unit) {
     val shown = if (mail) uri.substring(7).substringBefore('?') else uri
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (mail) "Write an e-mail?" else "Open link?") },
+        title = { Text(if (mail) "撰写电子邮件？" else "打开链接？") },
         text = { Text(shown, style = MaterialTheme.typography.bodyMedium) },
         confirmButton = {
             TextButton(onClick = {
                 onDismiss()
                 openExternalLink(context, uri)
-            }) { Text(if (mail) "Write" else "Open") }
+            }) { Text(if (mail) "撰写" else "打开") }
         },
         dismissButton = {
             Row {
                 TextButton(onClick = {
                     clipboard.setText(AnnotatedString(shown))
                     onDismiss()
-                }) { Text("Copy") }
-                TextButton(onClick = onDismiss) { Text("Cancel") }
+                }) { Text("复制") }
+                TextButton(onClick = onDismiss) { Text("取消") }
             }
         },
     )
 }
 
-private val HIGHLIGHT_NAMES = listOf("yellow", "green", "blue", "pink")
+private val HIGHLIGHT_NAMES = listOf("黄色", "绿色", "蓝色", "粉色")
 
 @Composable
 private fun Notice(text: String, action: String? = null, onAction: () -> Unit = {}) {

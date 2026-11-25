@@ -31,17 +31,17 @@ import kotlinx.coroutines.launch
 
 /** Flat-form tools that place a mark with the next tap on a page. */
 enum class PlaceTool(val hint: String) {
-    TEXT("Tap the page where the text should go"),
-    CHECK("Tap the page to place a check mark"),
-    CROSS("Tap the page to place a cross mark"),
-    NOTE("Tap the page where the note should go"),
+    TEXT("点按页面上要放置文本的位置"),
+    CHECK("点按页面以放置对勾"),
+    CROSS("点按页面以放置叉号"),
+    NOTE("点按页面上要放置注释的位置"),
 }
 
 /** Annotation tools that draw with a finger on a page. */
 enum class DrawTool(val hint: String) {
-    INK("Draw with your finger. Pinch to zoom."),
-    RECT("Drag to draw a rectangle"),
-    ELLIPSE("Drag to draw an ellipse"),
+    INK("用手指绘制。双指捏合可缩放。"),
+    RECT("拖动以绘制矩形"),
+    ELLIPSE("拖动以绘制椭圆"),
 }
 
 /** Strokes being drawn on one page, committed together as one drawing. */
@@ -267,7 +267,7 @@ class PdfViewerState(
         if (edit.committed) return
         edit.committed = true
         if (edit.text != edit.field.value) {
-            scope.launch { if (!session.setText(edit.field, edit.text)) onMessage("Could not fill ${edit.field.name}") }
+            scope.launch { if (!session.setText(edit.field, edit.text)) onMessage("无法填写 ${edit.field.name}") }
         }
     }
 
@@ -275,7 +275,7 @@ class PdfViewerState(
         choosing = null
         scope.launch {
             val selected = if (field.multiSelect) !field.options[option].selected else true
-            if (!session.selectOption(field, option, selected)) onMessage("Could not set ${field.name}")
+            if (!session.selectOption(field, option, selected)) onMessage("无法设置 ${field.name}")
         }
     }
 
@@ -331,7 +331,7 @@ class PdfViewerState(
             session.removeMark(mark.id)
             return
         }
-        scope.launch { if (!session.commit(mark)) onMessage("Could not add that to the page") }
+        scope.launch { if (!session.commit(mark)) onMessage("无法将其添加到页面") }
     }
 
     /** The page occupying the middle of the viewport. */
@@ -361,7 +361,7 @@ class PdfViewerState(
         selectJob = scope.launch {
             val at = session.charIndexAt(page, x, y, SELECT_TOLERANCE_PT)
             if (at < 0) {
-                onMessage("No selectable text here")
+                onMessage("此处没有可选择的文本")
                 return@launch
             }
             val word = PdfText.wordAround(session.pageText(page), at)
@@ -401,7 +401,7 @@ class PdfViewerState(
     fun highlightSelection(argb: Int, type: AnnotType = AnnotType.HIGHLIGHT) {
         val s = selection ?: return
         clearSelection()
-        scope.launch { if (!session.highlight(s.page, s.start, s.end, argb, type)) onMessage("Could not mark that text") }
+        scope.launch { if (!session.highlight(s.page, s.start, s.end, argb, type)) onMessage("无法标记该文本") }
     }
 
     /** Selects an annotation (or clears the selection with null); a note's text is read for display. */
@@ -419,7 +419,7 @@ class PdfViewerState(
     fun removeSelectedHighlight() {
         val h = selectedHighlight ?: return
         selectAnnotation(null)
-        scope.launch { if (!session.removeHighlight(h)) onMessage("Could not remove that") }
+        scope.launch { if (!session.removeHighlight(h)) onMessage("无法移除该批注") }
     }
 
     // --- drawing, shapes and notes ---
@@ -472,7 +472,7 @@ class PdfViewerState(
                 val r = s.rect
                 if (r.width < 4 || r.height < 4) return
                 val ellipse = drawTool == DrawTool.ELLIPSE
-                scope.launch { if (!session.addShape(s.page, r, ellipse, inkColor, INK_WIDTH)) onMessage("Could not add the shape") }
+                scope.launch { if (!session.addShape(s.page, r, ellipse, inkColor, INK_WIDTH)) onMessage("无法添加图形") }
             }
             null -> Unit
         }
@@ -483,7 +483,7 @@ class PdfViewerState(
         ink = null
         val strokes = draft.strokes.toList()
         if (strokes.isEmpty()) return
-        scope.launch { if (!session.addInk(draft.page, strokes, inkColor, INK_WIDTH)) onMessage("Could not add the drawing") }
+        scope.launch { if (!session.addInk(draft.page, strokes, inkColor, INK_WIDTH)) onMessage("无法添加绘制内容") }
     }
 
     /** Adds the note being placed, with [text]. */
@@ -491,7 +491,7 @@ class PdfViewerState(
         val draft = noteDraft ?: return
         noteDraft = null
         if (text.isBlank()) return
-        scope.launch { if (!session.addNote(draft.page, draft.x, draft.y, text.trim(), NOTE_COLOR)) onMessage("Could not add the note") }
+        scope.launch { if (!session.addNote(draft.page, draft.x, draft.y, text.trim(), NOTE_COLOR)) onMessage("无法添加注释") }
     }
 
     // --- search ---
@@ -512,7 +512,7 @@ class PdfViewerState(
                         showMatch()
                     }
                 }
-                if (searchMatches.isEmpty()) onMessage("No matches for \"$query\"")
+                if (searchMatches.isEmpty()) onMessage("没有匹配“$query”的内容")
             } finally {
                 searching = false
             }

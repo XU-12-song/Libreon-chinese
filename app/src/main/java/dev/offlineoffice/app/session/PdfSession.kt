@@ -273,7 +273,7 @@ class PdfSession(override val tabId: String) : DocumentSession, SaveAdvice, Docu
     override val findRequests = findRequestFlow()
 
     override suspend fun wordCount(): WordCount {
-        if (document == null) return WordCount(null, null, "Unlock the document to count its words.")
+        if (document == null) return WordCount(null, null, "解锁文档后即可统计字数。")
         var words = 0
         var chars = 0
         for (index in pageSizes.indices) {
@@ -284,7 +284,7 @@ class PdfSession(override val tabId: String) : DocumentSession, SaveAdvice, Docu
             }
         }
         val selection = selectedText?.takeIf { it.isNotBlank() }?.let { Count(WordCounter.count(it), WordCounter.countChars(it)) }
-        val note = if (words == 0 && pageSizes.isNotEmpty()) "No text was found: this PDF may be scanned images." else null
+        val note = if (words == 0 && pageSizes.isNotEmpty()) "未找到文本：此 PDF 可能是扫描图像。" else null
         return WordCount(Count(words, chars), selection, note)
     }
 

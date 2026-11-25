@@ -20,7 +20,7 @@
   var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
   function isDark() { return root.dataset.theme ? root.dataset.theme === 'dark' : darkQuery.matches; }
   function labelToggle() {
-    if (toggle) toggle.setAttribute('aria-label', isDark() ? 'Switch to light mode' : 'Switch to dark mode');
+    if (toggle) toggle.setAttribute('aria-label', isDark() ? '切换到浅色模式' : '切换到深色模式');
   }
   if (toggle) {
     labelToggle();
@@ -158,7 +158,7 @@
         var v = document.createElement('video');
         v.src = a.getAttribute('href');
         v.controls = true; v.autoplay = true; v.playsInline = true;
-        v.setAttribute('aria-label', 'Promo video: Libreon in 10 seconds');
+        v.setAttribute('aria-label', '宣传视频：10 秒了解 Libreon');
         open(v);
         var p = v.play(); if (p && p.catch) p.catch(function () {});
       } else {

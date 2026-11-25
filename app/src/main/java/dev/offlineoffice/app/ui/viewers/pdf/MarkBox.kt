@@ -107,7 +107,7 @@ fun MarkBox(state: PdfViewerState, mark: PdfMark, scale: Float, selected: Boolea
                     modifier = Modifier.fillMaxSize().background(Color(0x22448AFF)).focusRequester(focus),
                 )
             } else {
-                Canvas(Modifier.fillMaxSize().semantics { contentDescription = mark.text.ifEmpty { "Text mark" } }) {
+                Canvas(Modifier.fillMaxSize().semantics { contentDescription = mark.text.ifEmpty { "文本标记" } }) {
                     textPaint.color = mark.argb
                     textPaint.textSize = MarkGeometry.fontSizeFor(mark.rect) * scale
                     val baseline = (MarkGeometry.baselineFor(mark.rect) - mark.rect.top) * scale
@@ -115,7 +115,7 @@ fun MarkBox(state: PdfViewerState, mark: PdfMark, scale: Float, selected: Boolea
                 }
             }
             is PdfMark.Symbol -> Canvas(Modifier.fillMaxSize().semantics {
-                contentDescription = if (mark.cross) "Cross mark" else "Check mark"
+                contentDescription = if (mark.cross) "叉号标记" else "对勾标记"
             }) {
                 val pts = MarkGeometry.symbolPoints(mark.rect, mark.cross)
                 val stroke = MarkGeometry.symbolStroke(mark.rect) * scale
@@ -133,7 +133,7 @@ fun MarkBox(state: PdfViewerState, mark: PdfMark, scale: Float, selected: Boolea
                     i += 2
                 }
             }
-            is PdfMark.Signature -> Image(mark.image.asImageBitmap(), "Signature", Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds)
+            is PdfMark.Signature -> Image(mark.image.asImageBitmap(), "签名", Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds)
         }
     }
 
@@ -191,17 +191,17 @@ fun MarkBox(state: PdfViewerState, mark: PdfMark, scale: Float, selected: Boolea
         shadowElevation = 3.dp,
     ) {
         Row {
-            TextButton(onClick = { state.commitMark(current) }) { Text("Done") }
-            TextButton(onClick = { state.deleteMark(current) }) { Text("Delete") }
+            TextButton(onClick = { state.commitMark(current) }) { Text("完成") }
+            TextButton(onClick = { state.deleteMark(current) }) { Text("删除") }
             if (mark is PdfMark.Signature) {
                 TextButton(
                     onClick = { state.updateMark(mark.copy(asAnnotation = !mark.asAnnotation)) },
                     modifier = Modifier.semantics {
                         role = Role.Checkbox
-                        stateDescription = if (mark.asAnnotation) "Checked" else "Not checked"
+                        stateDescription = if (mark.asAnnotation) "已选中" else "未选中"
                     },
                 ) {
-                    Text(if (mark.asAnnotation) "☑ Keep as annotation" else "☐ Keep as annotation")
+                    Text(if (mark.asAnnotation) "☑ 保留为批注" else "☐ 保留为批注")
                 }
             }
         }

@@ -70,31 +70,31 @@ fun SignatureSheet(onDismiss: () -> Unit, onPick: (Bitmap, initials: Boolean) ->
 
     fun pick(signature: SavedSignature) = scope.launch {
         val bitmap = store.loadBitmap(signature)
-        if (bitmap != null) onPick(bitmap, signature.initials) else onMessage("Could not load the signature")
+        if (bitmap != null) onPick(bitmap, signature.initials) else onMessage("无法加载签名")
     }
 
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) scope.launch {
             runCatching { store.importImage(context, uri, initials) }
                 .onSuccess { pick(it) }
-                .onFailure { onMessage("Could not import the image") }
+                .onFailure { onMessage("无法导入图像") }
         }
     }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(shape = MaterialTheme.shapes.large, modifier = Modifier.widthIn(max = 560.dp)) {
             Column(Modifier.padding(16.dp)) {
-                Text("Signatures", style = MaterialTheme.typography.titleLarge)
+                Text("签名", style = MaterialTheme.typography.titleLarge)
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(selected = !initials, onClick = { initials = false }, label = { Text("Signature") })
-                    FilterChip(selected = initials, onClick = { initials = true }, label = { Text("Initials") })
+                    FilterChip(selected = !initials, onClick = { initials = false }, label = { Text("签名") })
+                    FilterChip(selected = initials, onClick = { initials = true }, label = { Text("姓名缩写") })
                 }
                 Spacer(Modifier.height(8.dp))
                 val shown = saved.filter { it.initials == initials }
                 if (shown.isEmpty()) {
                     Text(
-                        if (initials) "No saved initials yet." else "No saved signatures yet.",
+                        if (initials) "还没有已保存的姓名缩写。" else "还没有已保存的签名。",
                         Modifier.padding(vertical = 16.dp),
                         style = MaterialTheme.typography.bodyMedium,
                     )
@@ -116,20 +116,20 @@ fun SignatureSheet(onDismiss: () -> Unit, onPick: (Bitmap, initials: Boolean) ->
                     OutlinedButton(onClick = { drawing = true }) {
                         Icon(Icons.Outlined.Draw, null, Modifier.size(18.dp))
                         Spacer(Modifier.width(6.dp))
-                        Text("Draw new")
+                        Text("手绘新的")
                     }
                     OutlinedButton(onClick = {
                         picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                     }) {
                         Icon(Icons.Outlined.Image, null, Modifier.size(18.dp))
                         Spacer(Modifier.width(6.dp))
-                        Text("Import image")
+                        Text("导入图像")
                     }
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = onDismiss) { Text("Close") }
+                    TextButton(onClick = onDismiss) { Text("关闭") }
                 }
                 Text(
-                    "Signatures are stored only on this device.",
+                    "签名只保存在这台设备上。",
                     Modifier.padding(top = 8.dp),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -147,7 +147,7 @@ fun SignatureSheet(onDismiss: () -> Unit, onPick: (Bitmap, initials: Boolean) ->
                 scope.launch {
                     runCatching { store.saveInk(ink, initials) }
                         .onSuccess { pick(it) }
-                        .onFailure { onMessage("Could not save the signature") }
+                        .onFailure { onMessage("无法保存签名") }
                 }
             },
         )
@@ -158,14 +158,14 @@ fun SignatureSheet(onDismiss: () -> Unit, onPick: (Bitmap, initials: Boolean) ->
 private fun SavedRow(signature: SavedSignature, store: SignatureStore, onPick: () -> Unit, onDelete: () -> Unit) {
     val bitmap by produceState<Bitmap?>(null, signature.id) { value = store.loadBitmap(signature) }
     Row(
-        Modifier.fillMaxWidth().clickable(role = Role.Button, onClickLabel = "Select signature", onClick = onPick).padding(vertical = 6.dp),
+        Modifier.fillMaxWidth().clickable(role = Role.Button, onClickLabel = "选择签名", onClick = onPick).padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.weight(1f).height(64.dp).background(Color.White, MaterialTheme.shapes.small).padding(4.dp)) {
             bitmap?.let {
-                Image(it.asImageBitmap(), "Saved signature", Modifier.fillMaxWidth().height(56.dp), contentScale = ContentScale.Fit)
+                Image(it.asImageBitmap(), "已保存的签名", Modifier.fillMaxWidth().height(56.dp), contentScale = ContentScale.Fit)
             }
         }
-        IconButton(onClick = onDelete) { Icon(Icons.Outlined.Delete, "Delete") }
+        IconButton(onClick = onDelete) { Icon(Icons.Outlined.Delete, "删除") }
     }
 }

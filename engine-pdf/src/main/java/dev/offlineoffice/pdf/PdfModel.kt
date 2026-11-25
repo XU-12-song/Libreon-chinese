@@ -77,14 +77,14 @@ data class SearchMatch(val page: Int, val rects: List<PageRect>)
 
 /** Kinds of annotation the app can add, select and remove ([code] is PDFium's subtype). */
 enum class AnnotType(val code: Int, val label: String) {
-    HIGHLIGHT(9, "Highlight"),
-    UNDERLINE(10, "Underline"),
-    SQUIGGLY(11, "Squiggly underline"),
-    STRIKEOUT(12, "Strike-out"),
-    INK(15, "Drawing"),
-    SQUARE(5, "Rectangle"),
-    CIRCLE(6, "Ellipse"),
-    NOTE(1, "Note");
+    HIGHLIGHT(9, "高亮"),
+    UNDERLINE(10, "下划线"),
+    SQUIGGLY(11, "波浪下划线"),
+    STRIKEOUT(12, "删除线"),
+    INK(15, "绘制"),
+    SQUARE(5, "矩形"),
+    CIRCLE(6, "椭圆"),
+    NOTE(1, "注释");
 
     companion object {
         fun of(code: Int): AnnotType? = entries.firstOrNull { it.code == code }

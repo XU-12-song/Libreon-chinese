@@ -53,7 +53,7 @@ fun CsvTableView(text: String) {
     }
     val t = table ?: return Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
     if (t.rows.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("No rows") }
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("没有行") }
         return
     }
     val colors = MaterialTheme.colorScheme

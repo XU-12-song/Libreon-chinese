@@ -66,14 +66,14 @@ class OfficeSession(
     override fun captureViewState(): String? = null
 
     override suspend fun wordCount(): WordCount {
-        if (document.state.value != OfficeClient.State.Ready) return WordCount(null, null, "The document is still opening.")
+        if (document.state.value != OfficeClient.State.Ready) return WordCount(null, null, "文档仍在打开中。")
         val selected = runCatching { document.selectedText() }.getOrNull()
         val selection = selected?.takeIf { it.isNotBlank() }?.let { withContext(Dispatchers.Default) { Count(WordCounter.count(it), WordCounter.countChars(it)) } }
         val total = if (kind == DocumentKind.WORD) lastTotals else null
         val note = when {
-            selected == null -> "The selection could not be read."
-            total == null && kind == DocumentKind.WORD -> "Document totals appear once the document has finished laying out."
-            total == null -> "Totals are counted for text documents. Select cells or text to count them."
+            selected == null -> "无法读取所选内容。"
+            total == null && kind == DocumentKind.WORD -> "文档排版完成后会显示全文字数。"
+            total == null -> "字数统计适用于文本文档。请选择单元格或文本进行统计。"
             else -> null
         }
         return WordCount(total, selection, note)

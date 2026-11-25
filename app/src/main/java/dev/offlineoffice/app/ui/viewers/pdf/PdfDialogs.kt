@@ -48,19 +48,19 @@ fun PasswordPrompt(session: PdfSession) {
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(Icons.Outlined.Lock, null)
-            Text("This PDF is password protected", style = MaterialTheme.typography.titleMedium)
+            Text("此 PDF 受密码保护", style = MaterialTheme.typography.titleMedium)
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it; wrong = false },
-                label = { Text("Password") },
+                label = { Text("密码") },
                 singleLine = true,
                 isError = wrong,
-                supportingText = { if (wrong) Text("Incorrect password") },
+                supportingText = { if (wrong) Text("密码不正确") },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Go),
                 keyboardActions = KeyboardActions(onGo = { submit() }),
             )
-            Button(onClick = ::submit, enabled = password.isNotEmpty() && !busy) { Text("Open") }
+            Button(onClick = ::submit, enabled = password.isNotEmpty() && !busy) { Text("打开") }
         }
     }
 }

@@ -21,17 +21,17 @@ fun SaveAsNewDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Save signed document") },
+        title = { Text("保存已签名的文档") },
         text = {
             Column {
-                Text("Save the signed copy as a new file (\"$suggestedName\") and keep \"$displayName\" unchanged?")
+                Text("将签名后的副本保存为新文件（“$suggestedName”），并保持“$displayName”不变？")
             }
         },
-        confirmButton = { TextButton(onClick = onSaveAsNew) { Text("Save as new file") } },
+        confirmButton = { TextButton(onClick = onSaveAsNew) { Text("另存为新文件") } },
         dismissButton = {
             Column {
-                TextButton(onClick = onOverwrite) { Text("Overwrite original") }
-                TextButton(onClick = onDismiss) { Text("Cancel") }
+                TextButton(onClick = onOverwrite) { Text("覆盖原文件") }
+                TextButton(onClick = onDismiss) { Text("取消") }
             }
         },
     )

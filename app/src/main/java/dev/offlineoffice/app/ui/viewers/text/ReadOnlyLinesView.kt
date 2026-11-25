@@ -116,9 +116,9 @@ fun IndexingMessage(progress: Float, error: String?) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (error != null) {
-            Text("Could not read the file: $error", style = MaterialTheme.typography.bodyLarge)
+            Text("无法读取文件：$error", style = MaterialTheme.typography.bodyLarge)
         } else {
-            Text("Indexing lines…", style = MaterialTheme.typography.bodyLarge)
+            Text("正在建立行索引…", style = MaterialTheme.typography.bodyLarge)
             LinearProgressIndicator(progress = { progress }, modifier = Modifier.fillMaxWidth().padding(top = 16.dp))
         }
     }
@@ -134,19 +134,19 @@ fun HugeFileChooser(sizeBytes: Long, onHead: () -> Unit, onTail: () -> Unit) {
     ) {
         Icon(Icons.Outlined.WarningAmber, null, tint = MaterialTheme.colorScheme.error)
         Text(
-            "This file is ${formatSize(sizeBytes)}.",
+            "此文件大小为 ${formatSize(sizeBytes)}。",
             Modifier.padding(top = 12.dp),
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
-            "Files over 50 MB are too large to open whole. You can view the beginning or the end, read-only.",
+            "超过 50 MB 的文件太大，无法完整打开。你可以只读查看开头或结尾。",
             Modifier.padding(top = 8.dp),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
         )
         Row(Modifier.padding(top = 20.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Button(onClick = onHead) { Text("View first 4 MB") }
-            OutlinedButton(onClick = onTail) { Text("View last 4 MB") }
+            Button(onClick = onHead) { Text("查看前 4 MB") }
+            OutlinedButton(onClick = onTail) { Text("查看后 4 MB") }
         }
     }
 }

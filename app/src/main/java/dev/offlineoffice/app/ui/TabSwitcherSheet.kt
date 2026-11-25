@@ -60,10 +60,10 @@ fun TabSwitcherSheet(
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text("Open documents (${tabs.size})", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            Text("已打开的文档（${tabs.size}）", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
             TextButton(onClick = onOpen) {
                 Icon(Icons.Outlined.Add, null)
-                Text("Open")
+                Text("打开")
             }
         }
         if (showFilter) {
@@ -71,10 +71,10 @@ fun TabSwitcherSheet(
                 value = query,
                 onValueChange = { query = it },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-                placeholder = { Text("Search open documents") },
+                placeholder = { Text("搜索已打开的文档") },
                 leadingIcon = { Icon(Icons.Outlined.Search, null) },
                 trailingIcon = if (query.isNotEmpty()) {
-                    { IconButton(onClick = { query = "" }) { Icon(Icons.Outlined.Clear, "Clear") } }
+                    { IconButton(onClick = { query = "" }) { Icon(Icons.Outlined.Clear, "清除") } }
                 } else null,
                 singleLine = true,
             )
@@ -92,14 +92,14 @@ fun TabSwitcherSheet(
                     headlineContent = {
                         Text(tab.displayName, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
-                    supportingContent = if (tab.dirty) ({ Text("Unsaved changes") }) else null,
+                    supportingContent = if (tab.dirty) ({ Text("有未保存的更改") }) else null,
                     trailingContent = {
                         Row {
                             if (!isFiltering) {
-                                if (index > 0) IconButton(onClick = { onMove(tab.id, index - 1) }) { Icon(Icons.Outlined.KeyboardArrowUp, "Move up") }
-                                if (index < tabs.lastIndex) IconButton(onClick = { onMove(tab.id, index + 1) }) { Icon(Icons.Outlined.KeyboardArrowDown, "Move down") }
+                                if (index > 0) IconButton(onClick = { onMove(tab.id, index - 1) }) { Icon(Icons.Outlined.KeyboardArrowUp, "上移") }
+                                if (index < tabs.lastIndex) IconButton(onClick = { onMove(tab.id, index + 1) }) { Icon(Icons.Outlined.KeyboardArrowDown, "下移") }
                             }
-                            IconButton(onClick = { onClose(tab) }) { Icon(Icons.Outlined.Close, "Close ${tab.displayName}") }
+                            IconButton(onClick = { onClose(tab) }) { Icon(Icons.Outlined.Close, "关闭 ${tab.displayName}") }
                         }
                     },
                 )

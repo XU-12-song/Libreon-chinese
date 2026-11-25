@@ -88,7 +88,7 @@ fun HomeScreen(tabs: TabManager, onOpen: () -> Unit, onSelectTab: (String) -> Un
             Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.Center) {
                 Button(onClick = onOpen) {
                     Icon(Icons.Outlined.FolderOpen, null)
-                    Text("  Open a document")
+                    Text("  打开文档")
                 }
             }
         }
@@ -98,12 +98,12 @@ fun HomeScreen(tabs: TabManager, onOpen: () -> Unit, onSelectTab: (String) -> Un
                     value = query,
                     onValueChange = { query = it },
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-                    placeholder = { Text("Search open, recent and closed files") },
+                    placeholder = { Text("搜索已打开、最近使用和最近关闭的文件") },
                     leadingIcon = { Icon(Icons.Outlined.Search, null) },
                     trailingIcon = if (query.isNotEmpty()) {
                         {
                             IconButton(onClick = { query = "" }) {
-                                Icon(Icons.Outlined.Clear, "Clear")
+                                Icon(Icons.Outlined.Clear, "清除")
                             }
                         }
                     } else null,
@@ -118,40 +118,40 @@ fun HomeScreen(tabs: TabManager, onOpen: () -> Unit, onSelectTab: (String) -> Un
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        "No files match \"$query\"",
+                        "没有文件匹配“$query”",
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                     )
                     Spacer(Modifier.height(8.dp))
                     TextButton(onClick = onOpen) {
-                        Text("Search on device")
+                        Text("在设备上搜索")
                     }
                 }
             }
         } else {
             if (filteredOpen.isNotEmpty()) {
-                item { SectionHeader("Open tabs") }
+                item { SectionHeader("已打开的标签页") }
                 items(filteredOpen, key = { "tab-" + it.id }) { tab ->
                     ListItem(
                         modifier = Modifier.clickable(role = Role.Button) { onSelectTab(tab.id) },
                         leadingContent = { Icon(tab.kind.icon, null) },
                         headlineContent = { Text(tab.displayName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                        supportingContent = if (tab.dirty) ({ Text("Unsaved changes") }) else null,
+                        supportingContent = if (tab.dirty) ({ Text("有未保存的更改") }) else null,
                     )
                 }
             }
             if (filteredRecents.isNotEmpty()) {
-                item { SectionHeader("Recent") }
+                item { SectionHeader("最近使用") }
                 items(filteredRecents, key = { "recent-" + it.uri }) { recent ->
                     ListItem(
                         modifier = Modifier.clickable(role = Role.Button) {
                             if (!recent.reopenable) {
-                                onMessage("Pick ${recent.displayName} again with Open to reopen it")
+                                onMessage("请用“打开”重新选择 ${recent.displayName} 以再次打开它")
                                 return@clickable
                             }
                             scope.launch {
                                 runCatching { tabs.open(Uri.parse(recent.uri), OpenOrigin.PICKER, recent.mimeType) }
-                                    .onFailure { onMessage("Cannot reopen ${recent.displayName}: it may have moved or been deleted") }
+                                    .onFailure { onMessage("无法重新打开 ${recent.displayName}：它可能已被移动或删除") }
                             }
                         },
                         leadingContent = { Icon(recent.kind.icon, null) },
@@ -159,22 +159,22 @@ fun HomeScreen(tabs: TabManager, onOpen: () -> Unit, onSelectTab: (String) -> Un
                         supportingContent = {
                             val size = recent.size?.let { Formatter.formatShortFileSize(context, it) + " · " }.orEmpty()
                             val time = DateUtils.getRelativeTimeSpanString(recent.lastOpenedAt)
-                            Text(size + time + if (recent.reopenable) "" else " · re-pick to open")
+                            Text(size + time + if (recent.reopenable) "" else " · 需重新选择才能打开")
                         },
-                        trailingContent = if (recent.pinned) ({ Icon(Icons.Outlined.PushPin, "Pinned") }) else null,
+                        trailingContent = if (recent.pinned) ({ Icon(Icons.Outlined.PushPin, "已固定") }) else null,
                     )
                 }
             }
             if (filteredClosed.isNotEmpty()) {
-                item { SectionHeader("Recently closed") }
+                item { SectionHeader("最近关闭") }
                 items(filteredClosed, key = { "closed-" + it.id }) { tab ->
                     ListItem(
                         modifier = Modifier.clickable(role = Role.Button) {
-                            scope.launch { if (!tabs.reopen(tab)) onMessage("${tab.displayName} can no longer be opened without picking it again") }
+                            scope.launch { if (!tabs.reopen(tab)) onMessage("${tab.displayName} 无法再打开，需要重新选择它") }
                         },
                         leadingContent = { Icon(tab.kind.icon, null) },
                         headlineContent = { Text(tab.displayName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                        supportingContent = { Text("Closed " + DateUtils.getRelativeTimeSpanString(tab.closedAt ?: 0)) },
+                        supportingContent = { Text("关闭于 " + DateUtils.getRelativeTimeSpanString(tab.closedAt ?: 0)) },
                     )
                 }
             }
@@ -205,9 +205,9 @@ private fun LogoFooter(showIntro: Boolean) {
         )
         Text(
             if (showIntro) {
-                "Word, Excel, PowerPoint, PDF, Apple Pages, Numbers and Keynote, and text files open here. Everything stays on this device."
+                "Word、Excel、PowerPoint、PDF、Apple Pages、Numbers 和 Keynote，以及文本文件都可在此打开。一切内容都留在这台设备上。"
             } else {
-                "No ads, no accounts, no internet. Everything stays on this device."
+                "无广告、无账号、无需联网。一切内容都留在这台设备上。"
             },
             Modifier.padding(top = 12.dp),
             style = MaterialTheme.typography.bodyMedium,

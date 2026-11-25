@@ -31,12 +31,12 @@ private val notices = listOf(
 fun LicensesDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Open-source licenses") },
+        title = { Text("开源许可证") },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 Text(
-                    "Libreon is free software, licensed under the GNU General Public License v3.0 or later. " +
-                        "It has no network access, no accounts and no analytics.",
+                    "Libreon 是自由软件，基于 GNU 通用公共许可证 v3.0 或更新版本发布。" +
+                        "它没有网络访问权限、没有账号，也没有分析统计。",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 notices.forEach { (name, license) ->
@@ -45,6 +45,6 @@ fun LicensesDialog(onDismiss: () -> Unit) {
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("关闭") } },
     )
 }

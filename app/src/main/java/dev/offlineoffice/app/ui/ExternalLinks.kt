@@ -17,8 +17,8 @@ fun openExternalLink(context: Context, uri: String) {
     try {
         context.startActivity(intent)
     } catch (_: ActivityNotFoundException) {
-        Toast.makeText(context, if (mail) "No e-mail app is installed" else "No app can open this link", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, if (mail) "未安装电子邮件应用" else "没有应用可以打开此链接", Toast.LENGTH_SHORT).show()
     } catch (_: SecurityException) {
-        Toast.makeText(context, "No app can open this link", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "没有应用可以打开此链接", Toast.LENGTH_SHORT).show()
     }
 }

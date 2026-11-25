@@ -353,27 +353,27 @@ private fun Toolbar(
     val mode = session.mode
     Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         if (editable) {
-            IconButton(onClick = session::undo, enabled = session.canUndo) { Icon(Icons.AutoMirrored.Outlined.Undo, "Undo") }
-            IconButton(onClick = session::redo, enabled = session.canRedo) { Icon(Icons.AutoMirrored.Outlined.Redo, "Redo") }
+            IconButton(onClick = session::undo, enabled = session.canUndo) { Icon(Icons.AutoMirrored.Outlined.Undo, "撤销") }
+            IconButton(onClick = session::redo, enabled = session.canRedo) { Icon(Icons.AutoMirrored.Outlined.Redo, "重做") }
         }
         if (mode !is Mode.Huge) {
             IconButton(onClick = onFind, enabled = pane == Pane.TEXT || pane == Pane.SPLIT || !editable) {
-                Icon(Icons.Outlined.Search, "Find and replace")
+                Icon(Icons.Outlined.Search, "查找替换")
             }
         }
         if (editable) {
             when (session.kind) {
                 DocumentKind.MARKDOWN -> PaneSwitch(
-                    options = listOfNotNull(Pane.TEXT to "Edit", Pane.PREVIEW to "Preview", (Pane.SPLIT to "Split").takeIf { wide }),
+                    options = listOfNotNull(Pane.TEXT to "编辑", Pane.PREVIEW to "预览", (Pane.SPLIT to "分屏").takeIf { wide }),
                     selected = pane,
                     onSelect = { session.pane = it },
                 )
                 DocumentKind.CSV -> PaneSwitch(
-                    options = listOf(Pane.TEXT to "Text", Pane.TABLE to "Table"),
+                    options = listOf(Pane.TEXT to "文本", Pane.TABLE to "表格"),
                     selected = pane,
                     onSelect = { session.pane = it },
                 )
-                else -> if (session.isJson) TextButton(onClick = onFormatJson) { Text("Format") }
+                else -> if (session.isJson) TextButton(onClick = onFormatJson) { Text("格式化") }
             }
         } else {
             ReadOnlyBadge(mode)
@@ -401,8 +401,8 @@ private fun PaneSwitch(options: List<Pair<Pane, String>>, selected: Pane, onSele
 private fun ReadOnlyBadge(mode: Mode) {
     val window = (mode as? Mode.ReadOnly)?.window
     val suffix = when (window) {
-        TextSession.Window.HEAD -> " · first 4 MB"
-        TextSession.Window.TAIL -> " · last 4 MB"
+        TextSession.Window.HEAD -> " · 前 4 MB"
+        TextSession.Window.TAIL -> " · 后 4 MB"
         else -> ""
     }
     Surface(
@@ -412,7 +412,7 @@ private fun ReadOnlyBadge(mode: Mode) {
     ) {
         Row(Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Outlined.Lock, null, Modifier.padding(end = 4.dp).width(16.dp))
-            Text("Read-only (large file)$suffix", style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text("只读（大文件）$suffix", style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -421,34 +421,34 @@ private fun ReadOnlyBadge(mode: Mode) {
 private fun MoreMenu(session: TextSession, canGoToLine: Boolean, onGoToLine: () -> Unit, onEncoding: () -> Unit) {
     var open by remember { mutableStateOf(false) }
     Box {
-        IconButton(onClick = { open = true }) { Icon(Icons.Outlined.MoreVert, "Text options") }
+        IconButton(onClick = { open = true }) { Icon(Icons.Outlined.MoreVert, "文本选项") }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
-                text = { Text("Go to line…") },
+                text = { Text("跳转到行…") },
                 enabled = canGoToLine,
                 onClick = { open = false; onGoToLine() },
             )
             DropdownMenuItem(
-                text = { Text("Word wrap") },
+                text = { Text("自动换行") },
                 trailingIcon = { if (session.wrap) Icon(Icons.Outlined.Check, null) },
                 onClick = { session.wrap = !session.wrap; open = false },
                 modifier = Modifier.semantics {
                     role = Role.Checkbox
-                    stateDescription = if (session.wrap) "On" else "Off"
+                    stateDescription = if (session.wrap) "开" else "关"
                 },
             )
             DropdownMenuItem(
-                text = { Text("Monospace font") },
+                text = { Text("等宽字体") },
                 trailingIcon = { if (session.monospace) Icon(Icons.Outlined.Check, null) },
                 onClick = { session.monospace = !session.monospace; open = false },
                 modifier = Modifier.semantics {
                     role = Role.Checkbox
-                    stateDescription = if (session.monospace) "On" else "Off"
+                    stateDescription = if (session.monospace) "开" else "关"
                 },
             )
-            DropdownMenuItem(text = { Text("Encoding and line endings…") }, onClick = { open = false; onEncoding() })
+            DropdownMenuItem(text = { Text("编码和换行符…") }, onClick = { open = false; onEncoding() })
             if ((session.mode as? Mode.ReadOnly)?.window.let { it == TextSession.Window.HEAD || it == TextSession.Window.TAIL }) {
-                DropdownMenuItem(text = { Text("Choose beginning or end…") }, onClick = { open = false; session.closeWindow() })
+                DropdownMenuItem(text = { Text("选择开头或结尾…") }, onClick = { open = false; session.closeWindow() })
             }
         }
     }
@@ -460,23 +460,23 @@ private fun StatusLine(session: TextSession, stats: EditorStats, readOnlyLines: 
     val left = when (val mode = session.mode) {
         Mode.Editable -> {
             if (stats.hasSelection) {
-                "Selected: ${nf.format(stats.selectedWords)} of ${nf.format(stats.words)} words, ${nf.format(stats.selectedChars)} chars"
+                "已选择：${nf.format(stats.selectedWords)} / ${nf.format(stats.words)} 个词，${nf.format(stats.selectedChars)} 个字符"
             } else {
-                "Ln ${nf.format(stats.line)}, Col ${nf.format(stats.column)} · ${nf.format(stats.words)} words · ${nf.format(stats.chars)} chars"
+                "第 ${nf.format(stats.line)} 行，第 ${nf.format(stats.column)} 列 · ${nf.format(stats.words)} 个词 · ${nf.format(stats.chars)} 个字符"
             }
         }
-        is Mode.ReadOnly -> (readOnlyLines?.let { "${nf.format(it)} lines · " } ?: "") + formatSize(mode.sizeBytes)
+        is Mode.ReadOnly -> (readOnlyLines?.let { "${nf.format(it)} 行 · " } ?: "") + formatSize(mode.sizeBytes)
         is Mode.Huge -> formatSize(mode.sizeBytes)
     }
     Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(left, Modifier.weight(1f), style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
             if (session.lossy) {
-                Text("Undecodable bytes replaced", Modifier.padding(end = 8.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
+                Text("无法解码的字节已替换", Modifier.padding(end = 8.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
             }
             Text(
                 session.format.label,
-                Modifier.clickable(role = Role.Button, onClickLabel = "Change encoding and line endings", onClick = onEncoding).padding(vertical = 2.dp),
+                Modifier.clickable(role = Role.Button, onClickLabel = "更改编码和换行符", onClick = onEncoding).padding(vertical = 2.dp),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.primary,
                 maxLines = 1,

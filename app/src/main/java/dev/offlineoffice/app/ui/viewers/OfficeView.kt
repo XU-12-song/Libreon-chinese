@@ -86,7 +86,7 @@ fun OfficeView(session: OfficeSession, onSave: () -> Unit, onReload: () -> Unit)
         if (session.readOnly) {
             Surface(color = MaterialTheme.colorScheme.secondaryContainer) {
                 Text(
-                    "Opened read-only: this format can be viewed but not saved.",
+                    "以只读方式打开：此格式可以查看，但无法保存。",
                     Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -98,11 +98,11 @@ fun OfficeView(session: OfficeSession, onSave: () -> Unit, onReload: () -> Unit)
             Surface(color = MaterialTheme.colorScheme.tertiaryContainer) {
                 Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "Tip: tap the pencil button to edit. Double-tap a word (or long-press it while reading) to select it, then drag the handles.",
+                        "提示：点按铅笔按钮即可编辑。双击某个词（阅读时则长按它）可将其选中，然后拖动控制点。",
                         Modifier.weight(1f).padding(vertical = 8.dp),
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    TextButton(onClick = settings::dismissOfficeTip) { Text("Got it") }
+                    TextButton(onClick = settings::dismissOfficeTip) { Text("知道了") }
                 }
             }
         }
@@ -111,11 +111,11 @@ fun OfficeView(session: OfficeSession, onSave: () -> Unit, onReload: () -> Unit)
                 Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Outlined.Edit, contentDescription = null, Modifier.size(20.dp))
                     Text(
-                        "You're in reading mode. To type, tap the pencil button at the bottom right of the page.",
+                        "你正处于阅读模式。要输入内容，请点按页面右下角的铅笔按钮。",
                         Modifier.weight(1f).padding(start = 12.dp, top = 8.dp, bottom = 8.dp),
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    TextButton(onClick = { editHint = false }) { Text("OK") }
+                    TextButton(onClick = { editHint = false }) { Text("好") }
                 }
             }
         }
@@ -152,7 +152,7 @@ fun OfficeView(session: OfficeSession, onSave: () -> Unit, onReload: () -> Unit)
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(s.message, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
-                    Button(onClick = onReload, modifier = Modifier.padding(top = 16.dp)) { Text("Reload") }
+                    Button(onClick = onReload, modifier = Modifier.padding(top = 16.dp)) { Text("重新加载") }
                 }
                 OfficeClient.State.Ready -> Unit
             }
@@ -201,35 +201,35 @@ private fun OfficeFindBar(document: OfficeClient, onClose: () -> Unit) {
 
     Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onClose) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Close find") }
+            IconButton(onClick = onClose) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "关闭查找") }
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
                 modifier = Modifier.weight(1f).focusRequester(focus),
-                placeholder = { Text("Find in document") },
+                placeholder = { Text("在文档中查找") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = { find() }),
                 trailingIcon = {
                     if (query.isNotEmpty()) {
-                        IconButton(onClick = { query = "" }) { Icon(Icons.Outlined.Close, "Clear") }
+                        IconButton(onClick = { query = "" }) { Icon(Icons.Outlined.Close, "清除") }
                     }
                 },
             )
             Text(
                 when (val c = count) {
                     null -> ""
-                    0 -> "No matches"
-                    1 -> "1 match"
-                    else -> "$c matches"
+                    0 -> "无匹配"
+                    1 -> "1 处匹配"
+                    else -> "$c 处匹配"
                 },
                 Modifier.padding(horizontal = 8.dp),
                 style = MaterialTheme.typography.labelLarge,
             )
             val canStep = searched != null && count != 0
-            IconButton(onClick = { find(backward = true) }, enabled = canStep) { Icon(Icons.Outlined.KeyboardArrowUp, "Previous match") }
-            IconButton(onClick = { find() }, enabled = canStep) { Icon(Icons.Outlined.KeyboardArrowDown, "Next match") }
-            TextButton(onClick = { searched = null; find() }) { Text("Find") }
+            IconButton(onClick = { find(backward = true) }, enabled = canStep) { Icon(Icons.Outlined.KeyboardArrowUp, "上一处匹配") }
+            IconButton(onClick = { find() }, enabled = canStep) { Icon(Icons.Outlined.KeyboardArrowDown, "下一处匹配") }
+            TextButton(onClick = { searched = null; find() }) { Text("查找") }
         }
     }
 }

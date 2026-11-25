@@ -79,51 +79,51 @@ fun SettingsScreen(settings: Settings, onLicenses: () -> Unit, onDismiss: () -> 
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Settings") },
-                    navigationIcon = { IconButton(onClick = onDismiss) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Back") } },
+                    title = { Text("设置") },
+                    navigationIcon = { IconButton(onClick = onDismiss) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回") } },
                 )
             },
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
-                SectionTitle("Appearance")
+                SectionTitle("外观")
                 Column(Modifier.selectableGroup()) {
                     Settings.ThemeMode.entries.forEach { mode ->
                         ListItem(
                             modifier = Modifier.selectable(selected = theme == mode, role = Role.RadioButton) { settings.setTheme(mode) },
                             headlineContent = { Text(mode.label) },
-                            supportingContent = if (mode == Settings.ThemeMode.SYSTEM) ({ Text("Light or dark, as set on this device") }) else null,
+                            supportingContent = if (mode == Settings.ThemeMode.SYSTEM) ({ Text("浅色或深色，与这台设备的设置一致") }) else null,
                             leadingContent = { RadioButton(selected = theme == mode, onClick = null) },
                         )
                     }
                 }
                 Text(
-                    "Office documents follow the app theme. To read one document with light pages while the app is dark, use Light pages in its menu.",
+                    "Office 文档会跟随应用主题。如果想在应用处于深色时让某份文档使用浅色页面，请在它的菜单中使用“浅色页面”。",
                     Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 HorizontalDivider(Modifier.padding(vertical = 8.dp))
-                SectionTitle("Tabs")
+                SectionTitle("标签页")
                 ListItem(
                     modifier = Modifier.toggleable(value = tabBar, role = Role.Switch) { settings.setTabBar(it) },
-                    headlineContent = { Text("Tab bar on wide screens") },
-                    supportingContent = { Text("Shown in landscape and on tablets. The arrow button in the top bar also hides it.") },
+                    headlineContent = { Text("宽屏上的标签栏") },
+                    supportingContent = { Text("在横屏和平板上显示。顶栏中的箭头按钮也可以隐藏它。") },
                     trailingContent = { Switch(checked = tabBar, onCheckedChange = null) },
                 )
                 HorizontalDivider(Modifier.padding(vertical = 8.dp))
-                SectionTitle("About")
+                SectionTitle("关于")
                 ListItem(
                     headlineContent = { Text("${stringResource(R.string.app_name)} $version") },
-                    supportingContent = { Text("${stringResource(R.string.app_tagline)}. Fully offline: no internet permission, no accounts, no analytics.") },
+                    supportingContent = { Text("${stringResource(R.string.app_tagline)}。完全离线：无联网权限、无账号、无分析统计。") },
                 )
                 ListItem(
                     modifier = Modifier.selectable(selected = false, role = Role.Button, onClick = onLicenses),
-                    headlineContent = { Text("Open-source licenses") },
+                    headlineContent = { Text("开源许可证") },
                 )
                 ListItem(
                     modifier = Modifier.selectable(selected = false, role = Role.Button) { openInBrowser(context, ISSUES_URL) },
-                    headlineContent = { Text("Report a problem or suggest a feature") },
-                    supportingContent = { Text("Opens Libreon on GitHub in your browser") },
+                    headlineContent = { Text("报告问题或建议功能") },
+                    supportingContent = { Text("在浏览器中打开 Libreon 的 GitHub 页面") },
                     leadingContent = { Icon(Icons.Outlined.BugReport, null) },
                 )
                 CoffeeBanner(onClick = { openInBrowser(context, COFFEE_URL) })
@@ -148,7 +148,7 @@ private fun openInBrowser(context: Context, url: String) {
     try {
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addCategory(Intent.CATEGORY_BROWSABLE))
     } catch (e: ActivityNotFoundException) {
-        Toast.makeText(context, "No browser found to open $url", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "找不到可用于打开 $url 的浏览器", Toast.LENGTH_LONG).show()
     }
 }
 
@@ -165,13 +165,13 @@ private fun CoffeeBanner(onClick: () -> Unit) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Outlined.LocalCafe, null, Modifier.size(36.dp))
             Column(Modifier.weight(1f).padding(horizontal = 16.dp)) {
-                Text("Enjoying Libreon?", style = MaterialTheme.typography.titleMedium)
+                Text("喜欢 Libreon 吗？", style = MaterialTheme.typography.titleMedium)
                 Text(
-                    "It's free, with no ads or subscriptions. If it helps you, you can buy me a coffee.",
+                    "它免费，没有广告也没有订阅。如果它帮到了你，可以请我喝杯咖啡。",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            Icon(Icons.AutoMirrored.Outlined.OpenInNew, "Opens in your browser", Modifier.size(20.dp))
+            Icon(Icons.AutoMirrored.Outlined.OpenInNew, "在浏览器中打开", Modifier.size(20.dp))
         }
     }
 }

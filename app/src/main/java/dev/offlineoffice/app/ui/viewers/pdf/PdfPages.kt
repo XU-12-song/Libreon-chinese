@@ -97,7 +97,7 @@ fun PagesSheet(session: PdfSession, current: Int, onPick: (Int) -> Unit, onDismi
         scope.launch {
             val ok = runCatching { action() }.getOrElse { false }
             busy = false
-            onMessage(if (ok) done else "That didn't work")
+            onMessage(if (ok) done else "操作失败")
             if (ok) endSelection()
         }
     }
@@ -107,7 +107,7 @@ fun PagesSheet(session: PdfSession, current: Int, onPick: (Int) -> Unit, onDismi
     val extract = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri: Uri? ->
         val pages = extracting
         if (uri == null || pages.isEmpty()) return@rememberLauncherForActivityResult
-        run(if (pages.size == 1) "Page saved as a new PDF" else "${pages.size} pages saved as a new PDF") {
+        run(if (pages.size == 1) "页面已保存为新的 PDF" else "${pages.size} 个页面已保存为新的 PDF") {
             val temp = File(context.cacheDir, "extract.pdf")
             try {
                 session.extractPages(pages, temp)
@@ -132,9 +132,9 @@ fun PagesSheet(session: PdfSession, current: Int, onPick: (Int) -> Unit, onDismi
             busy = false
             onMessage(
                 when {
-                    result.exceptionOrNull().let { it is PdfOpenException && it.needsPassword } -> "That PDF is password protected"
-                    result.getOrNull() == true -> "Pages inserted"
-                    else -> "Could not insert that file"
+                    result.exceptionOrNull().let { it is PdfOpenException && it.needsPassword } -> "该 PDF 受密码保护"
+                    result.getOrNull() == true -> "页面已插入"
+                    else -> "无法插入该文件"
                 },
             )
             if (result.getOrNull() == true) endSelection()
@@ -146,43 +146,43 @@ fun PagesSheet(session: PdfSession, current: Int, onPick: (Int) -> Unit, onDismi
             Column {
                 Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        if (selecting) "${selected.size} selected" else "Pages ($pageCount)",
+                        if (selecting) "已选择 ${selected.size} 个" else "页面（$pageCount）",
                         Modifier.weight(1f),
                         style = MaterialTheme.typography.titleLarge,
                     )
                     if (selecting) {
-                        IconButton(onClick = ::endSelection) { Icon(Icons.Outlined.Close, "Cancel selection") }
+                        IconButton(onClick = ::endSelection) { Icon(Icons.Outlined.Close, "取消选择") }
                     } else {
-                        IconButton(onClick = { selecting = true }, enabled = !busy) { Icon(Icons.Outlined.Checklist, "Select pages") }
+                        IconButton(onClick = { selecting = true }, enabled = !busy) { Icon(Icons.Outlined.Checklist, "选择页面") }
                         IconButton(onClick = { insert.launch(arrayOf("application/pdf")) }, enabled = !busy) {
-                            Icon(Icons.Outlined.NoteAdd, "Insert pages from another PDF")
+                            Icon(Icons.Outlined.NoteAdd, "从另一个 PDF 插入页面")
                         }
-                        IconButton(onClick = onDismiss) { Icon(Icons.Outlined.Close, "Close") }
+                        IconButton(onClick = onDismiss) { Icon(Icons.Outlined.Close, "关闭") }
                     }
                 }
                 if (selecting) {
                     val sorted = selected.sorted()
                     val any = sorted.isNotEmpty() && !busy
                     Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp)) {
-                        TextButton(onClick = { run("Rotated") { session.rotatePages(sorted, 1) } }, enabled = any) {
+                        TextButton(onClick = { run("已旋转") { session.rotatePages(sorted, 1) } }, enabled = any) {
                             Icon(Icons.Outlined.RotateRight, null)
-                            Text(" Rotate")
+                            Text(" 旋转")
                         }
                         TextButton(onClick = { moving = true }, enabled = any) {
                             Icon(Icons.AutoMirrored.Outlined.DriveFileMove, null)
-                            Text(" Move")
+                            Text(" 移动")
                         }
                         TextButton(onClick = { extracting = sorted; extract.launch("Pages.pdf") }, enabled = any) {
                             Icon(Icons.Outlined.FileCopy, null)
-                            Text(" Extract")
+                            Text(" 提取")
                         }
                         TextButton(onClick = { confirmDelete = true }, enabled = any && sorted.size < pageCount) {
                             Icon(Icons.Outlined.Delete, null)
-                            Text(" Delete")
+                            Text(" 删除")
                         }
                     }
                     Text(
-                        "Tap pages to select them.",
+                        "点按页面即可选择。",
                         Modifier.padding(horizontal = 16.dp),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -222,19 +222,19 @@ fun PagesSheet(session: PdfSession, current: Int, onPick: (Int) -> Unit, onDismi
         val n = selected.size
         AlertDialog(
             onDismissRequest = { confirmDelete = false },
-            title = { Text(if (n == 1) "Delete page ${selected.first() + 1}?" else "Delete $n pages?") },
+            title = { Text(if (n == 1) "删除第 ${selected.first() + 1} 页？" else "删除 $n 个页面？") },
             text = {
-                val what = if (n == 1) "It is" else "They are"
-                Text("$what removed from this document when you save it. Until then, Discard changes brings it all back.")
+                val what = if (n == 1) "其" else "它们"
+                Text("保存时会将$what从文档中移除。在此之前，“放弃更改”可以全部恢复。")
             },
             confirmButton = {
                 TextButton(onClick = {
                     confirmDelete = false
                     val pages = selected.sorted()
-                    run(if (pages.size == 1) "Page deleted" else "${pages.size} pages deleted") { session.deletePages(pages) }
-                }) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+                    run(if (pages.size == 1) "页面已删除" else "已删除 ${pages.size} 个页面") { session.deletePages(pages) }
+                }) { Text("删除", color = MaterialTheme.colorScheme.error) }
             },
-            dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text("取消") } },
         )
     }
     if (moving) {
@@ -242,12 +242,12 @@ fun PagesSheet(session: PdfSession, current: Int, onPick: (Int) -> Unit, onDismi
         val position = target.toIntOrNull()?.takeIf { it in 1..pageCount }
         AlertDialog(
             onDismissRequest = { moving = false },
-            title = { Text("Move to position") },
+            title = { Text("移动到位置") },
             text = {
                 OutlinedTextField(
                     value = target,
                     onValueChange = { target = it.filter(Char::isDigit).take(6) },
-                    label = { Text("Position (1 to $pageCount)") },
+                    label = { Text("位置（1 到 $pageCount）") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
@@ -258,10 +258,10 @@ fun PagesSheet(session: PdfSession, current: Int, onPick: (Int) -> Unit, onDismi
                     val pages = selected.sorted()
                     // The position counts in the document after the move.
                     val dest = (position!! - 1).coerceAtMost(pageCount - pages.size)
-                    run("Moved") { session.movePages(pages, dest) }
-                }) { Text("Move") }
+                    run("已移动") { session.movePages(pages, dest) }
+                }) { Text("移动") }
             },
-            dismissButton = { TextButton(onClick = { moving = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { moving = false }) { Text("取消") } },
         )
     }
 }
@@ -283,7 +283,7 @@ private fun Thumbnail(
     }
     val highlighted = checked || current
     Column(
-        Modifier.combinedClickable(role = Role.Button, onClickLabel = "Page ${index + 1}", onLongClickLabel = "Select", onClick = onClick, onLongClick = onLongClick),
+        Modifier.combinedClickable(role = Role.Button, onClickLabel = "第 ${index + 1} 页", onLongClickLabel = "选择", onClick = onClick, onLongClick = onLongClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
@@ -293,10 +293,10 @@ private fun Thumbnail(
                 .background(Color.White)
                 .border(if (highlighted) 3.dp else 1.dp, if (highlighted) MaterialTheme.colorScheme.primary else Color.LightGray),
         ) {
-            bitmap?.let { Image(it.asImageBitmap(), "Page ${index + 1}", Modifier.fillMaxSize()) }
+            bitmap?.let { Image(it.asImageBitmap(), "第 ${index + 1} 页", Modifier.fillMaxSize()) }
             if (checked) {
                 Icon(
-                    Icons.Outlined.CheckCircle, "Selected",
+                    Icons.Outlined.CheckCircle, "已选中",
                     Modifier.align(Alignment.TopEnd).padding(4.dp).background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.extraLarge),
                     tint = MaterialTheme.colorScheme.primary,
                 )

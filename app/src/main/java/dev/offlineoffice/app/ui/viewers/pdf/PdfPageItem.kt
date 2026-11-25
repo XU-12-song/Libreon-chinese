@@ -128,7 +128,7 @@ fun PdfPageItem(state: PdfViewerState, index: Int) {
         Modifier
             .pixelSize(widthPx, heightPx)
             .background(Color.White)
-            .semantics { contentDescription = "Page ${index + 1}" }
+            .semantics { contentDescription = "第 ${index + 1} 页" }
             .onGloballyPositioned { c ->
                 val pos = c.positionInRoot()
                 val b = c.boundsInRoot()
@@ -251,7 +251,7 @@ private fun ChoiceMenu(state: PdfViewerState, field: FormField, scale: Float) {
     Box(Modifier.offset { IntOffset(r.left.roundToInt(), r.bottom.roundToInt()) }) {
         DropdownMenu(expanded = true, onDismissRequest = { state.choosing = null }) {
             if (field.options.isEmpty()) {
-                DropdownMenuItem(text = { Text("No options") }, onClick = { state.choosing = null })
+                DropdownMenuItem(text = { Text("没有可选项") }, onClick = { state.choosing = null })
             }
             field.options.forEachIndexed { i, option ->
                 DropdownMenuItem(
@@ -259,13 +259,13 @@ private fun ChoiceMenu(state: PdfViewerState, field: FormField, scale: Float) {
                     onClick = { state.choose(field, i) },
                     modifier = Modifier.semantics {
                         role = if (field.multiSelect) Role.Checkbox else Role.RadioButton
-                        stateDescription = if (option.selected) "Selected" else "Not selected"
+                        stateDescription = if (option.selected) "已选中" else "未选中"
                     },
                 )
             }
             if (field.editableChoice) {
                 DropdownMenuItem(
-                    text = { Text("Type a value…") },
+                    text = { Text("输入一个值…") },
                     onClick = { state.choosing = null; state.editing = FieldEdit(field) },
                 )
             }

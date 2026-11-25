@@ -60,8 +60,8 @@ class FindState {
         get() = when {
             query.isEmpty() -> ""
             progress != null -> "…"
-            matches.isEmpty() -> "No results"
-            else -> "${if (current >= 0) current + 1 else 0} of ${matches.size}${if (capped) "+" else ""}"
+            matches.isEmpty() -> "无结果"
+            else -> "${if (current >= 0) current + 1 else 0} / ${matches.size}${if (capped) "+" else ""}"
         }
 }
 
@@ -85,7 +85,7 @@ fun FindReplaceBar(
                     value = find.query,
                     onValueChange = { find.query = it },
                     modifier = Modifier.weight(1f).focusRequester(focus),
-                    placeholder = { Text("Find") },
+                    placeholder = { Text("查找") },
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyMedium,
                     suffix = { Text(find.countLabel, style = MaterialTheme.typography.labelMedium) },
@@ -93,32 +93,32 @@ fun FindReplaceBar(
                     keyboardActions = KeyboardActions(onSearch = { onNext() }),
                 )
                 IconButton(onClick = onPrevious, enabled = find.matches.isNotEmpty()) {
-                    Icon(Icons.Outlined.KeyboardArrowUp, "Previous match")
+                    Icon(Icons.Outlined.KeyboardArrowUp, "上一处匹配")
                 }
                 IconButton(onClick = onNext, enabled = find.matches.isNotEmpty()) {
-                    Icon(Icons.Outlined.KeyboardArrowDown, "Next match")
+                    Icon(Icons.Outlined.KeyboardArrowDown, "下一处匹配")
                 }
                 if (canReplace) {
                     IconButton(onClick = { find.replaceVisible = !find.replaceVisible }) {
                         Icon(
                             if (find.replaceVisible) Icons.Outlined.UnfoldLess else Icons.Outlined.UnfoldMore,
-                            if (find.replaceVisible) "Hide replace" else "Show replace",
+                            if (find.replaceVisible) "隐藏替换" else "显示替换",
                         )
                     }
                 }
-                IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, "Close find") }
+                IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, "关闭查找") }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 FilterChip(
                     selected = find.matchCase,
                     onClick = { find.matchCase = !find.matchCase },
-                    label = { Text("Match case") },
+                    label = { Text("区分大小写") },
                 )
                 Spacer(Modifier.width(8.dp))
                 if (canReplace && find.replaceVisible) {
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = onReplace, enabled = find.current >= 0) { Text("Replace") }
-                    TextButton(onClick = onReplaceAll, enabled = find.matches.isNotEmpty()) { Text("Replace all") }
+                    TextButton(onClick = onReplace, enabled = find.current >= 0) { Text("替换") }
+                    TextButton(onClick = onReplaceAll, enabled = find.matches.isNotEmpty()) { Text("全部替换") }
                 }
             }
             if (canReplace && find.replaceVisible) {
@@ -126,7 +126,7 @@ fun FindReplaceBar(
                     value = find.replacement,
                     onValueChange = { find.replacement = it },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
-                    placeholder = { Text("Replace with") },
+                    placeholder = { Text("替换为") },
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyMedium,
                 )

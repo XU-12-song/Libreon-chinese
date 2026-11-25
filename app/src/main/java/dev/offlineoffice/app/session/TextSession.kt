@@ -48,7 +48,7 @@ class TextSession(override val tabId: String, override val kind: DocumentKind) :
     override val findRequests = findRequestFlow()
 
     override suspend fun wordCount(): WordCount {
-        if (mode != Mode.Editable) return WordCount(null, null, "This file is too large to count; only part of it is loaded.")
+        if (mode != Mode.Editable) return WordCount(null, null, "此文件过大，无法统计字数；仅加载了部分内容。")
         val text = state.text.toString()
         val sel = state.selection
         return withContext(Dispatchers.Default) {

@@ -32,29 +32,29 @@ fun WordCountDialog(request: WordCountRequest, onDismiss: () -> Unit) {
     }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Word count") },
+        title = { Text("字数统计") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(request.displayName, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 val r = result
                 when {
                     r == null -> CircularProgressIndicator(Modifier.padding(8.dp))
-                    r.isFailure -> Text("Could not count: ${r.exceptionOrNull()?.message}")
+                    r.isFailure -> Text("无法统计：${r.exceptionOrNull()?.message}")
                     else -> {
                         val count = r.getOrThrow()
-                        CountRows("Document", count.document)
-                        CountRows("Selection", count.selection, empty = "Nothing selected")
+                        CountRows("整篇文档", count.document)
+                        CountRows("所选内容", count.selection, empty = "未选择任何内容")
                         count.note?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
                     }
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("关闭") } },
     )
 }
 
 @Composable
-private fun CountRows(label: String, count: Count?, empty: String = "Not available") {
+private fun CountRows(label: String, count: Count?, empty: String = "不可用") {
     val nf = remember { NumberFormat.getIntegerInstance() }
     Column {
         Text(label, style = MaterialTheme.typography.titleSmall)
@@ -62,11 +62,11 @@ private fun CountRows(label: String, count: Count?, empty: String = "Not availab
             Text(empty, style = MaterialTheme.typography.bodyMedium)
         } else {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Words")
+                Text("字数")
                 Text(nf.format(count.words))
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Characters")
+                Text("字符数")
                 Text(nf.format(count.chars))
             }
         }
