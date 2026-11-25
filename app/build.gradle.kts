@@ -15,8 +15,8 @@ android {
         applicationId = "dev.libreon.app"
         minSdk = 31
         targetSdk = 36
-        versionCode = 10
-        versionName = "0.9.5-beta.5"
+        versionCode = 11
+        versionName = "0.9.5-beta.5-zh.1"
     }
     // The release key lives outside version control (signing/, git-ignored). Without it,
     // release builds fall back to the debug key, which is fine for local testing only.

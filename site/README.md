@@ -1,6 +1,6 @@
 # Libreon website
 
-A static one-page site: `index.html`, `styles.css`, `main.js` and `assets/`. It loads nothing from other servers. It's live at <https://jainiakhil.github.io/Libreon/>: every push to `main` that touches `site/` republishes it through `.github/workflows/pages.yml`.
+A static one-page site: `index.html`, `styles.css`, `main.js` and `assets/`. It loads nothing from other servers. It's live at <https://xu-12-song.github.io/Libreon-chinese/>: every push to `main` that touches `site/` republishes it through `.github/workflows/pages.yml`.
 
 ## Editing
 

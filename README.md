@@ -4,8 +4,8 @@
 <p align="center"><b>自由办公。</b><br>一款私密、完全离线的 Android 办公套件。无广告、无订阅、无追踪、无 AI。</p>
 
 <p align="center">
-  <a href="https://github.com/jainiakhil/Libreon/releases/latest"><img src="https://img.shields.io/badge/Download-Latest%20APK-2ea44f?style=for-the-badge&logo=android&logoColor=white" alt="下载最新 APK"></a>
-  <a href="https://jainiakhil.github.io/Libreon/"><img src="https://img.shields.io/badge/Website-jainiakhil.github.io%2FLibreon-fc4e2b?style=for-the-badge&logo=googlechrome&logoColor=white" alt="访问 Libreon 网站"></a>
+  <a href="https://github.com/XU-12-song/Libreon-chinese/releases/latest"><img src="https://img.shields.io/badge/Download-Latest%20APK-2ea44f?style=for-the-badge&logo=android&logoColor=white" alt="下载最新 APK"></a>
+  <a href="https://xu-12-song.github.io/Libreon-chinese/"><img src="https://img.shields.io/badge/Website-xu-12-song.github.io%2FLibreon-chinese-fc4e2b?style=for-the-badge&logo=googlechrome&logoColor=white" alt="访问 Libreon 网站"></a>
   <br><sub>在 <b>Assets</b> 下选择 <code>arm64-v8a</code> 的 APK：它适用于几乎所有手机。<a href="#install">安装帮助</a></sub>
 </p>
 
@@ -67,7 +67,7 @@ Libreon **完全没有联网权限**。Android 本身就会阻止它上网。没
 
 ## 安装
 
-1. 从[最新版本](https://github.com/jainiakhil/Libreon/releases/latest)（**Assets** 下）下载 APK：
+1. 从[最新版本](https://github.com/XU-12-song/Libreon-chinese/releases/latest)（**Assets** 下）下载 APK：
    - `arm64-v8a` 适用于几乎所有手机和平板；
    - `x86_64` 用于模拟器和部分 Chromebook。
 2. 打开它，当 Android 询问时允许从浏览器或文件管理器安装。

@@ -137,7 +137,7 @@ fun SettingsScreen(settings: Settings, onLicenses: () -> Unit, onDismiss: () -> 
     }
 }
 
-private const val ISSUES_URL = "https://github.com/jainiakhil/Libreon/issues"
+private const val ISSUES_URL = "https://github.com/XU-12-song/Libreon-chinese/issues"
 private const val COFFEE_URL = "https://buymeacoffee.com/jainiakhil"
 
 /**

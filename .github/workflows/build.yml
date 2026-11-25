@@ -1,0 +1,103 @@
+# Builds the release APKs (arm64-v8a and x86_64) and, for a tag push, publishes them as a
+# GitHub Release. The LibreOffice engine takes hours to cross-compile, so instead of building
+# it the workflow lifts the engine's libraries and assets out of an official upstream APK;
+# everything else (app, PDFium wrapper, resources) is built from this repository's source.
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPO: jainiakhil/Libreon
+  UPSTREAM_TAG: v0.9.5-beta.5
+  UPSTREAM_VERSION: 0.9.5-beta.5
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install the Android NDK, CMake, platform and build tools
+        run: |
+          sdkmanager --install "ndk;28.2.13676358" "cmake;3.22.1" \
+            "platforms;android-36" "build-tools;35.0.0"
+
+      - name: Fetch PDFium
+        run: ./scripts/fetch-pdfium.sh
+
+      - name: Take the Office engine from the upstream APK
+        run: |
+          for abi in arm64-v8a x86_64; do
+            url="https://github.com/$UPSTREAM_REPO/releases/download/$UPSTREAM_TAG/Libreon-$UPSTREAM_VERSION-$abi.apk"
+            curl -fsSL "$url" -o "$RUNNER_TEMP/up-$abi.apk"
+            bash native/lok/import-from-apk.sh "$RUNNER_TEMP/up-$abi.apk" "$abi"
+          done
+
+      - name: Configure release signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          mkdir -p signing
+          printf 'storeFile=signing/release.p12\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+            "$STORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" > signing/keystore.properties
+          echo "$KEYSTORE_BASE64" | base64 -d > signing/release.p12
+
+      - name: Assemble the release APKs
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: Collect the APKs
+        run: |
+          version=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' app/build.gradle.kts)
+          mkdir dist
+          cp app/build/outputs/apk/release/app-arm64-v8a-release.apk "dist/Libreon-$version-arm64-v8a.apk"
+          cp app/build/outputs/apk/release/app-x86_64-release.apk "dist/Libreon-$version-x86_64.apk"
+          (cd dist && sha256sum *.apk > "SHA256SUMS-$version.txt")
+          cat dist/SHA256SUMS-*.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-apks
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-apks
+          path: dist
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          cat > notes.md <<'EOF'
+          Libreon 的简体中文界面版本。
+
+          - `arm64-v8a` 适用于几乎所有手机和平板；`x86_64` 用于模拟器和部分 Chromebook。
+          - 本版本由本仓库重新构建并重新签名，不能覆盖安装官方版本；请先卸载官方版本再安装（应用内数据会被清除）。
+          - 除界面语言外，功能与官方版一致；代码与官方版同样以 GPL-3.0 开源。
+          EOF
+          gh release create "$TAG" dist/* \
+            --repo "$GITHUB_REPOSITORY" --title "Libreon 中文版 $TAG" --notes-file notes.md --latest
