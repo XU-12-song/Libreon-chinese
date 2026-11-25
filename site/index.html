@@ -224,7 +224,7 @@
 <section class="shots" id="screenshots" aria-labelledby="shots-title">
   <div class="wrap">
     <h2 id="shots-title" class="h2" data-reveal>See it</h2>
-    <p class="shots__hint">Tap a poster to see it full size. Feel free to share them.</p>
+    <p class="shots__hint">Tap a poster to see it bigger. Feel free to share them.</p>
     <div class="shots__strip" tabindex="0" role="region" aria-label="Posters, scroll sideways">
       <figure class="poster">
         <a href="assets/posters/poster2-full.webp" target="_blank" rel="noopener"><img src="assets/posters/poster2.webp" width="600" height="900" alt="Poster: Your documents. Minus the junk. Open, edit and save Word, Excel, PowerPoint and PDF. Free and offline. The fox holds up a document." loading="lazy" decoding="async"></a>
@@ -247,12 +247,20 @@
       <figure class="poster">
         <a href="assets/posters/poster1-full.webp" target="_blank" rel="noopener"><img src="assets/posters/poster1.webp" width="600" height="900" alt="Poster: Work freely. Download now! A free, private, offline office app for Android. The Libreon logo, with a QR code that opens Libreon on GitHub." loading="lazy" decoding="async"></a>
       </figure>
+      <div class="strip-divider" aria-hidden="true"><span>Watch</span></div>
+      <figure class="poster poster--video">
+        <a href="assets/video/libreon-promo.mp4" class="js-video" target="_blank" rel="noopener" aria-label="Play the promo video: Libreon in 10 seconds">
+          <img src="assets/video/libreon-promo.webp" width="720" height="1280" alt="" loading="lazy" decoding="async">
+          <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+        </a>
+        <figcaption>Libreon in 10 seconds</figcaption>
+      </figure>
     </div>
-    <figure class="promo" data-reveal>
-      <video src="assets/video/libreon-promo.mp4" poster="assets/video/libreon-promo.webp" width="720" height="1280" controls playsinline preload="none" aria-label="A short promo clip of Libreon on a phone"></video>
-      <figcaption>Libreon in 10 seconds</figcaption>
-    </figure>
   </div>
+  <dialog class="lightbox" aria-label="Full size view">
+    <button type="button" class="lightbox__close" aria-label="Close">&times;</button>
+    <div class="lightbox__body"></div>
+  </dialog>
 </section>
 
 <!-- ============ WHAT IT DOESN'T HAVE + PRIVACY ============ -->

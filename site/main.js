@@ -136,3 +136,37 @@
   });
   root.classList.add('js-ready');
 })();
+
+// Posters and the promo video open in a pop-up (a <dialog>) instead of a new tab.
+(function () {
+  var box = document.querySelector('.lightbox');
+  if (!box || typeof box.showModal !== 'function') return; // old browsers keep the plain links
+  var body = box.querySelector('.lightbox__body');
+
+  function open(node) {
+    body.replaceChildren(node);
+    box.showModal();
+  }
+  box.addEventListener('close', function () { body.replaceChildren(); }); // stops the video
+  box.querySelector('.lightbox__close').addEventListener('click', function () { box.close(); });
+  box.addEventListener('click', function (e) { if (e.target === box) box.close(); }); // tap outside
+
+  document.querySelectorAll('.poster a').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (a.classList.contains('js-video')) {
+        var v = document.createElement('video');
+        v.src = a.getAttribute('href');
+        v.controls = true; v.autoplay = true; v.playsInline = true;
+        v.setAttribute('aria-label', 'Promo video: Libreon in 10 seconds');
+        open(v);
+        var p = v.play(); if (p && p.catch) p.catch(function () {});
+      } else {
+        var img = document.createElement('img');
+        img.src = a.getAttribute('href');
+        img.alt = a.querySelector('img').alt;
+        open(img);
+      }
+    });
+  });
+})();
