@@ -26,14 +26,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
+      # Puts sdkmanager on PATH and exports ANDROID_HOME/ANDROID_SDK_ROOT for Gradle.
+      - uses: android-actions/setup-android@v3
 
       - name: Install the Android NDK, CMake, platform and build tools
         run: |
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
           sdkmanager --install "ndk;28.2.13676358" "cmake;3.22.1" \
             "platforms;android-36" "build-tools;35.0.0"
 
