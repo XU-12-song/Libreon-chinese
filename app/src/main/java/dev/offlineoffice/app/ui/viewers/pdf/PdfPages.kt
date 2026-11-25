@@ -225,7 +225,7 @@ fun PagesSheet(session: PdfSession, current: Int, onPick: (Int) -> Unit, onDismi
             title = { Text(if (n == 1) "删除第 ${selected.first() + 1} 页？" else "删除 $n 个页面？") },
             text = {
                 val what = if (n == 1) "其" else "它们"
-                Text("保存时会将$what从文档中移除。在此之前，“放弃更改”可以全部恢复。")
+                Text("保存时会将${what}从文档中移除。在此之前，“放弃更改”可以全部恢复。")
             },
             confirmButton = {
                 TextButton(onClick = {
