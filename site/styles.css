@@ -274,8 +274,6 @@ details > summary:focus-visible { outline-offset: 2px; }
 .feat--every { --tone: var(--tile-orange); }
 .feat summary { display: grid; grid-template-columns: 76px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px 12px 10px; border-radius: calc(var(--radius) - 3px); }
 .feat__art { height: 66px; width: 76px; }
-.feat__art--tile { display: grid; place-items: center; }
-.feat__art--tile span { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 14px; background: var(--tone); border: 2.5px solid var(--ink); color: var(--ink); font: 900 .9rem/1 var(--font-display); transform: rotate(-6deg); box-shadow: 3px 3px 0 var(--shadow); }
 .feat__head { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .feat__title { font: 800 1.15rem/1.2 var(--font-display); letter-spacing: -.01em; }
 .feat__teaser { color: var(--muted); font-size: .93rem; line-height: 1.45; }
@@ -498,7 +496,30 @@ html.js .sticker.is-in s::after { transform: rotate(-4deg) scaleX(1); }
 .fox--jumping .shadow { fill: rgba(6, 11, 20, .18); animation: shadow 1.9s cubic-bezier(.4,0,.4,1) infinite; transform-origin: 50% 50%; }
 @keyframes shadow { 0%, 100% { transform: scaleX(1); opacity: 1; } 45% { transform: scaleX(.7); opacity: .5; } }
 .arc { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 2 20; animation: wind 1s linear infinite reverse; opacity: .55; }
-.coffee .fox .fox-art { filter: none !important; }
+/* In a feature card the wind and shadow follow the text colour, so they show in dark mode */
+.feat .arc { stroke: var(--text); opacity: .4; }
+.feat .fox--jumping .shadow { fill: color-mix(in srgb, var(--text) 18%, transparent); }
+
+/* Coffee badge: the Buy Me a Coffee cup and the Libreon icon as two stickers */
+.coffee__art { display: grid; place-items: center; }
+.coffee__badge { position: relative; display: block; width: 92px; height: 72px; }
+.coffee__cup, .coffee__fox {
+  position: absolute; top: 8px; width: 52px; height: 52px; border-radius: 14px;
+  border: 2.5px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); background: #fff;
+  transition: transform .25s ease;
+}
+.coffee__cup { left: 2px; transform: rotate(-9deg); z-index: 1; }
+.coffee__fox { right: 2px; transform: rotate(8deg); background: #f8fafc; }
+.coffee__heart { position: absolute; left: 50%; top: -4px; width: 22px; height: 22px; margin-left: -11px; z-index: 2; fill: var(--fox); stroke: var(--ink); stroke-width: 2; animation: beat 1.6s ease-in-out infinite; }
+@keyframes beat { 0%, 60%, 100% { transform: scale(1); } 15% { transform: scale(1.22); } 30% { transform: scale(.96); } 45% { transform: scale(1.12); } }
+.coffee:hover .coffee__cup { transform: rotate(-14deg) translateX(-3px); }
+.coffee:hover .coffee__fox { transform: rotate(13deg) translateX(3px); }
+@media (min-width: 760px) {
+  .coffee__badge { width: 170px; height: 120px; }
+  .coffee__cup, .coffee__fox { top: 16px; width: 92px; height: 92px; border-radius: 22px; box-shadow: 4px 4px 0 var(--ink); }
+  .coffee__heart { width: 34px; height: 34px; margin-left: -17px; top: -2px; }
+}
+@media (prefers-reduced-motion: reduce) { .coffee__heart { animation: none; } .coffee__cup, .coffee__fox { transition: none; } }
 
 /* ---------- Footer ---------- */
 .footer { padding: 28px 0 36px; border-top: 2px solid color-mix(in srgb, var(--text) 10%, transparent); background: var(--bg-alt); }

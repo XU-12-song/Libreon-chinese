@@ -11,6 +11,8 @@
 <meta property="og:title" content="Libreon: Work freely">
 <meta property="og:description" content="A free, private, fully offline office suite for Android. No ads, no subscriptions, no trackers, no AI.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://jainiakhil.github.io/Libreon/">
+<link rel="canonical" href="https://jainiakhil.github.io/Libreon/">
 <link rel="icon" type="image/png" href="assets/libreon-icon.png">
 <link rel="apple-touch-icon" href="assets/libreon-icon.png">
 <link rel="stylesheet" href="styles.css">
@@ -33,7 +35,7 @@
     <nav aria-label="Sections">
       <ul class="nav">
         <li><a href="#features">Features</a></li>
-        <li><a href="#screenshots">Posters</a></li>
+        <li><a href="#posters">Posters</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
     </nav>
@@ -144,7 +146,15 @@
 
       <details class="feat feat--pdf" data-reveal>
         <summary>
-          <span class="feat__art feat__art--tile" aria-hidden="true"><span>PDF</span></span>
+          <span class="feat__art scene">
+            <svg class="fox fox--jumping" viewBox="-90 -60 489 380" aria-hidden="true">
+              <g class="flair">
+                <ellipse class="shadow" cx="215" cy="306" rx="120" ry="10"/>
+                <path class="arc" d="M-80 300 Q -20 150 80 140"/>
+              </g>
+              <g class="hop">{{fox:Jumping}}</g>
+            </svg>
+          </span>
           <span class="feat__head">
             <span class="feat__title">PDF</span>
             <span class="feat__teaser">Fill forms, sign, highlight, annotate, move pages.</span>
@@ -221,9 +231,9 @@
 </section>
 
 <!-- ============ POSTERS AND VIDEO (see site/README.md) ============ -->
-<section class="shots" id="screenshots" aria-labelledby="shots-title">
+<section class="shots" id="posters" aria-labelledby="shots-title">
   <div class="wrap">
-    <h2 id="shots-title" class="h2" data-reveal>See it</h2>
+    <h2 id="shots-title" class="h2" data-reveal>Posters to share</h2>
     <p class="shots__hint">Tap a poster to see it bigger. Feel free to share them.</p>
     <div class="shots__strip" tabindex="0" role="region" aria-label="Posters, scroll sideways">
       <figure class="poster">
@@ -363,15 +373,12 @@
 <aside class="coffee-wrap" aria-label="Support Libreon">
   <div class="wrap">
     <div class="coffee" data-reveal>
-      <div class="coffee__art scene">
-        <svg class="fox fox--jumping" viewBox="-90 -60 489 380" role="img" aria-labelledby="t-jump">
-          <title id="t-jump">The fox leaping happily</title>
-          <g class="flair" aria-hidden="true">
-            <ellipse class="shadow" cx="215" cy="306" rx="120" ry="10"/>
-            <path class="arc" d="M-80 300 Q -20 150 80 140"/>
-          </g>
-          <g class="hop">{{fox:Jumping}}</g>
-        </svg>
+      <div class="coffee__art" aria-hidden="true">
+        <span class="coffee__badge">
+          <img class="coffee__cup" src="assets/bmc-cup.png" alt="" width="447" height="447" loading="lazy" decoding="async">
+          <img class="coffee__fox" src="assets/libreon-icon.png" alt="" width="512" height="512" loading="lazy" decoding="async">
+          <svg class="coffee__heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 3 5 6.4 5c2.1 0 3.6 1.2 5.6 3.4C14 6.2 15.5 5 17.6 5 21 5 23.1 8.5 21.6 11.8 19.5 16.4 12 21 12 21z"/></svg>
+        </span>
       </div>
       <div class="coffee__copy">
         <p class="coffee__title">Libreon is free, and always will be. Like it?</p>
